@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "我的公告",
+  "usingComponents": {
+    "login-register": "../../components/loginRegister/loginRegister",
+    "my-assets": "../../components/myAssets/myAssets"
+  }
+}

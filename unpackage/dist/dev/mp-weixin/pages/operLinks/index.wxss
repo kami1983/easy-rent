@@ -1,0 +1,53 @@
+
+.container.data-v-d1cb3572 {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.button.data-v-d1cb3572 {
+  background-color: #007AFF; 
+  margin-bottom: 10px; 
+  padding: 10px 20px; 
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  border-radius: 5px;
+}
+.terms-button.data-v-d1cb3572 {
+  background-color: #007AFF; /* 按钮背景色 */
+}
+.button-text.data-v-d1cb3572 {
+  color: white; 
+  font-size: 16px;
+}
+.button-icon.data-v-d1cb3572 {
+  color: white; 
+  font-size: 24px;
+}
+.image-section image.data-v-d1cb3572 {
+  width: 100%;
+}
+.buttons button.data-v-d1cb3572 {
+  width: 100%;
+  margin-top: 10px;
+  background-color: #007AFF;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+}
+.submit-button[disabled].data-v-d1cb3572 {
+  background-color: #ccc;
+}
+.checkbox-group.data-v-d1cb3572 {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  width: 100%; /* 确保占满容器宽度 */
+}
+.checkbox-label.data-v-d1cb3572 {
+  margin: 20px 0;
+  display: flex;
+  align-items: center; /* 确保复选框和文本垂直居中 */
+}
+

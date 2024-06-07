@@ -1,0 +1,1 @@
+<scroll-view class="container"><view><login-register wx:if="{{a}}" u-i="578fc106-0" bind:__l="__l" u-p="{{a}}"></login-register></view><view><my-assets u-i="578fc106-1" bind:__l="__l"></my-assets></view></scroll-view>

@@ -1,0 +1,1 @@
+<view class="container"><view class="text-section"><text class="title">{{a}}</text><text class="subtitle">{{b}}</text><text class="description">{{c}}</text></view></view>

@@ -1,0 +1,1 @@
+<view class="card"><image class="card-image" src="{{a}}" mode="aspectFill"/><view class="card-content"><text class="card-title">{{b}}</text><text class="card-details">{{c}}</text><text class="card-address">{{d}}</text></view></view>

@@ -1,0 +1,1 @@
+<view class="container"><view class="icon-section"><image src="{{a}}" class="icon-image"/></view><view class="text-section"><text class="main-text">{{b}}</text></view><view class="text-section button-section" bindtap="{{c}}"><text class="main-button">+</text></view></view>

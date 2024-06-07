@@ -1,0 +1,42 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/find/index",
+    "pages/profile/index",
+    "pages/operLinks/index",
+    "pages/fullTerms/index",
+    "pages/inputRentInfos/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#8e8e93",
+    "selectedColor": "#d43f3f",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/images/renting.png",
+        "selectedIconPath": "static/images/renting.png",
+        "text": "出租公告"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "iconPath": "static/images/myinfos.png",
+        "selectedIconPath": "static/images/myinfos.png",
+        "text": "我的公告"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的应用需要使用你的位置权限来提供地图功能"
+    }
+  },
+  "usingComponents": {}
+}

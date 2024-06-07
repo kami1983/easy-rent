@@ -1,0 +1,73 @@
+{
+	"pages":[
+		{
+		  "path": "pages/index/index",
+		  "style": {
+			"navigationBarTitleText": "直租公告"
+		  }
+		},
+		{
+		  "path": "pages/find/index",
+		  "style": {
+			"navigationBarTitleText": "社区公告"
+		  }
+		},
+		{
+		  "path": "pages/profile/index",
+		  "style": {
+			"navigationBarTitleText": "我的公告"
+		  }
+		},
+		{
+		  "path": "pages/operLinks/index",
+		  "style": {
+			"navigationBarTitleText": "添加公告"
+		  }
+		},
+		{
+		  "path": "pages/fullTerms/index",
+		  "style": {
+			"navigationBarTitleText": "许可条款"
+		  }
+		},
+		{
+		  "path": "pages/inputRentInfos/index",
+		  "style": {
+			"navigationBarTitleText": "添加租房信息"
+		  }
+		} 
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+	"tabBar": {
+	  "color": "#8e8e93",
+	  "selectedColor": "#d43f3f",
+	  "backgroundColor": "#ffffff",
+	  "borderStyle": "black",
+	  "list": [
+	    {
+	      "pagePath": "pages/index/index",
+	      "iconPath": "static/images/renting.png",
+	      "selectedIconPath": "static/images/renting.png",
+	      "text": "出租公告"
+	    },
+		  // {
+		  //   "pagePath": "pages/find/index",
+		  //   "iconPath": "static/images/seeking-rent.png",
+		  //   "selectedIconPath": "static/images/seeking-rent.png",
+		  //   "text": "社区公告"
+		  // },
+	    {
+	      "pagePath": "pages/profile/index",
+	      "iconPath": "static/images/myinfos.png",
+	      "selectedIconPath": "static/images/myinfos.png",
+	      "text": "我的公告"
+	    }
+	  ]
+	}
+}

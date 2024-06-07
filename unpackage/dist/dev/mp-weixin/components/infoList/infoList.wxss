@@ -1,0 +1,42 @@
+
+.property-list {
+  display: flex;
+  flex-direction: column;
+}
+.no-data {
+  text-align: center;
+  padding: 20px;
+}
+.property-item {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+.property-content {
+  display: flex;
+  flex-direction: row;
+}
+.property-details {
+  flex: 1;
+  justify-content: center;
+}
+.property-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+.property-info {
+  font-size: 14px;
+  color: #666;
+}
+.action-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.action-button {
+  background-color: #1e88e5;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  border: none;
+}

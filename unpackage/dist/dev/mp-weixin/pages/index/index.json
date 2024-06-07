@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "直租公告",
+  "usingComponents": {
+    "promo-banner": "../../components/promoBanner/promoBanner",
+    "house-item": "../../components/houseItem/houseItem"
+  }
+}
