@@ -21,3 +21,11 @@
 		font-size: 36rpx;
 		color: #8f8f94;
 }
+.number-input {
+		width: 100%;
+		padding-bottom: 10px;
+		padding-top: 10px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		color: RED;
+}

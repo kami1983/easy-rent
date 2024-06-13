@@ -64,7 +64,8 @@ const _sfc_main = {
       nickName: "..",
       avatarUrl: "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
     },
-    getCloudApi: getCloudApi()
+    getCloudApi: getCloudApi(),
+    callWithWxCloud
   },
   callWithWxCloud,
   onLaunch: function() {
@@ -76,9 +77,7 @@ const _sfc_main = {
         success: function(res) {
           const userInfo = res.userInfo;
           console.log({ userInfo });
-          console.log("--1");
           that.globalData.userInfo = userInfo;
-          console.log("--2");
           callWithWxCloud({
             path: "/registerUser",
             method: "POST",

@@ -17,9 +17,8 @@
 	  
 	<view class="form-item">
 	   <text class="label">月租价格：（人民币）</text>
-	   <input type="number" placeholder="请输入月租价格" v-model="rentForm.rent_form_month_rent_price" />
+	   <NumberInput @onChange="onRentFormMonthRentPriceChanged" placeholder="请输入月租价格" class-name="number-input" />
 	</view>
-			
     <!-- 租赁类型选择器 -->
     <view class="form-item">
       <radio-group @change="onRentTypeChange">
@@ -31,7 +30,7 @@
 	
 	<view class="form-item">
 	  <text class="label">租赁面积：（平米）</text>
-	  <input type="number" placeholder="请输入租赁面积" v-model="rentForm.rent_form_rent_area" />
+	  <NumberInput @onChange="onRentFormRentAreaChanged" placeholder="请输入租赁面积" class-name="number-input" />
 	</view>
 	
 	<view class="form-item">
@@ -41,7 +40,7 @@
 	
 	<!-- #ifndef MP-ALIPAY -->
 	<view class="form-item">
-		<text class="label">房屋规格：</text>
+		<text class="label">房屋规格2：</text>
 		<view class="uni-list">
 			<view class="uni-list-cell">
 				<view class="uni-list-cell-db">
@@ -51,6 +50,10 @@
 				</view>
 			</view>
 		</view>
+	</view>
+	<view class="form-item">
+		<label>XXXXXXXXXXXXXXXXXXXXXXXXX</label>
+		<HouseSpecPicker label="Test" :multi-array="multiArray" @change="onSpecChange" />
 	</view>
 	<!-- #endif -->
 	
@@ -101,10 +104,10 @@
 	  <checkbox-group @change="toggleCashDiscount">
 	    <label class="checkbox-label">
 		  <checkbox value="checked" :checked="cashDiscount.isChecked" />
-	      返现优惠（给租户返现金，可选）
+	      返现优惠（金额，可选）
 	    </label>
 	  </checkbox-group>
-	  <input v-if="this.cashDiscount.isChecked" type="text" placeholder="请输入信息" v-model="this.cashDiscount.inputData" />
+	  <NumberInput v-if="this.cashDiscount.isChecked" @onChange="onCashDiscountChanged" placeholder="优惠金额(数值)" class-name="number-input" />
 	</view>
 
 	<view class="form-item">
@@ -122,107 +125,135 @@
 </template>
 
 <script>
+import NumberInput from '@/components/numberInput/numberInput.vue';
+import HouseSpecPicker from '@/components/selectPicker/selectPicker.vue';
+
+	
 export default {
-  data() {
-	  
-	  
-    return {
-		mapLocation: {
-			markers: [],
-			latitude: 23.099994,
-			longitude: 113.324520
+	components: {
+	    NumberInput,
+		HouseSpecPicker
+	  },
+	data() {
+		return {
+			mapLocation: {
+				markers: [],
+				latitude: 23.099994,
+				longitude: 113.324520
+			},
+			imageList: [],
+			isLocationAuthorized: false ,
+			tags: [
+			{ name: '非中介', active: false },
+			{ name: '电梯房', active: false },
+			{ name: '南北通透', active: false },
+			{ name: '明厨明卫', active: false },
+			{ name: '不临街', active: false },
+			{ name: '精装修', active: false },
+			{ name: '带家电', active: false },
+			{ name: '高楼层', active: false },
+			{ name: '带露台', active: false },
+			{ name: '学区房', active: false },
+			{ name: '商住两用', active: false }
+			],
+		rentForm: {
+			rent_form_rent_type: '',
+			rent_form_payment_method: '',
+			rent_form_month_rent_price: '',
+			rent_form_pictures: [],
 		},
-		imageList: [],
-		isLocationAuthorized: false ,
-		tags: [
-		  { name: '非中介', active: false },
-		  { name: '电梯房', active: false },
-		  { name: '南北通透', active: false },
-		  { name: '明厨明卫', active: false },
-		  { name: '不临街', active: false },
-		  { name: '精装修', active: false },
-		  { name: '带家电', active: false },
-		  { name: '高楼层', active: false },
-		  { name: '带露台', active: false },
-		  { name: '学区房', active: false },
-		  { name: '商住两用', active: false }
+		rentTypes: ['整租', '合租', '转租'],
+		paymentMethods: ['月付', '季付', '半年付', '年付'],
+		multiArray: [
+			['一室A', '二室B', '三室', '四室'],
+			['开间', '一厅', '两厅'],
+			['一卫', '双卫', '三卫']
 		],
-      rentForm: {
-        rent_form_rent_type: '',
-        rent_form_payment_method: '',
-        rent_form_month_rent_price: '',
-        rent_form_pictures: [],
-      },
-      rentTypes: ['整租', '合租', '转租'],
-      paymentMethods: ['月付', '季付', '半年付', '年付'],
-	  multiArray: [
-	  	['一室', '二室', '三室', '四室'],
-	  	['开间', '一厅', '两厅'],
-	  	['一卫', '双卫', '三卫']
-	  ],
-	  multiIndex: [0, 0, 0],
-	  cashDiscount: {
-		isChecked: false,
-		inputData: ''
-	  },
-	  contactInformation: {
-		isChecked: false,
-		inputData: ''
-	  },
-	  additionalDetails: {
-		isChecked: false,
-		inputData: ''
-	  }
-    };
-  },
+		multiIndex: [0, 0, 0],
+		cashDiscount: {
+			isChecked: false,
+			inputData: ''
+		},
+		contactInformation: {
+			isChecked: false,
+			inputData: ''
+		},
+		additionalDetails: {
+			isChecked: false,
+			inputData: ''
+		}
+		};
+	},
   mounted() {
     this.checkLocationAuthorization();
 	this.getUserLocation();
   },
   methods: {
 	
-	async updateImageToCloud(tmpFile){
-		// 使用 split() 方法按斜杠 '/' 分割 URL
-		const parts = tmpFile.split('/');
-		
-		// 获取数组的最后一个元素，即文件名
-		const filename = parts[parts.length - 1];
-		
-		// 获取当前日期
-		const now = new Date();
-		const year = now.getFullYear(); // 获取当前年份
-		const month = now.getMonth() + 1; // 获取当前月份（月份从0开始计数，所以加1）
-		const day = now.getDate(); // 获取当前日期
-		
-		// 格式化月份和日期，确保它们始终是两位数字
-		const formattedMonth = month < 10 ? `0${month}` : month;
-		const formattedDay = day < 10 ? `0${day}` : day;
-		
-		const app = getApp();
-		const cloudApi = await app.globalData.getCloudApi;
-		console.log('cloudApi = ', cloudApi)
-		// cloudApi 替代：wx.cloud
-		cloudApi.uploadFile({
-		  cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`, // 对象存储路径，根路径直接填文件名，文件夹例子 test/文件名，不要 / 开头
-		  filePath: tmpFile, // 微信本地文件，通过选择图片，聊天文件等接口获取
-		  config: {
-			env: 'prod-4g3usz1465b5625e' // 微信云托管环境ID
-		  },
-		  success: (res) => {
-			  console.log('Update ok ', res)
-			  return res.fileID
-			  // const fileID = res.fileID
-			  // cloudApi.getTempFileURL({
-			  //   fileList: [fileID], // 文件唯一标识符 cloudID, 可通过上传文件接口获取
-			  //   success: console.log,
-			  //   fail: console.error
-			  // })
-		  },
-		  fail: (err)=>{
-			  console.log('Update failed ', err)
-			  return null
-		  }
-		})
+	async updateImageToCloud(tmpFile) {
+	  // Splitting URL by '/' to extract the file name
+	  const parts = tmpFile.split('/');
+	  const filename = parts[parts.length - 1]; // Getting the last part of the array, which is the filename
+	
+	  // Getting current date information
+	  const now = new Date();
+	  const year = now.getFullYear(); // Current year
+	  const month = now.getMonth() + 1; // Current month, adjusted for zero index
+	  const day = now.getDate(); // Current day
+	
+	  // Ensuring month and day are two digits
+	  const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+	  const formattedDay = day < 10 ? `0${day}` : `${day}`;
+	
+	  // Assuming getApp() and globalData.getCloudApi are correct references for your environment
+	  const app = getApp();
+	  const cloudApi = await app.globalData.getCloudApi;
+	  console.log('cloudApi = ', cloudApi);
+	
+	  try {
+	    const res = await new Promise((resolve, reject) => {
+	      cloudApi.uploadFile({
+	        cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`, // Storage path in the cloud
+	        filePath: tmpFile, // Local file path obtained from file selection or chat interfaces
+	        config: {
+	          env: 'prod-4g3usz1465b5625e' // Cloud environment ID
+	        },
+	        success: res => {
+	          resolve(res.fileID); // Resolve promise with fileID if upload succeeds
+	        },
+	        fail: err => {
+	          reject(err); // Reject promise if upload fails
+	        }
+	      });
+	    });
+	
+	    console.log('Update ok', res);
+	    return res; // Return the file ID or handle it as needed
+	  } catch (err) {
+	    console.error('Update failed', err);
+	    return null; // Return null in case of an error
+	  }
+	},
+	onSpecChange(newIndex) {
+		console.log('Selected indices:', newIndex);
+		this.multiIndex = newIndex
+	},
+	handleInput(event) {
+	  console.log('HandleInput runing.')
+	  // 获取输入的内容
+	  const value = event.detail.value;
+	  // 移除非数字字符
+	  // const filteredValue = value.replace(/\D/g, '');
+	  const filteredValue = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+	  
+	  console.log({value, filteredValue})
+	  // 更新数据
+	  if (value !== filteredValue) {
+	    // 此处设置数据需要根据实际数据路径设置
+	    return filteredValue;
+	  }
+	  this.cashDiscount.inputData = value;
+	  return value;
 	},
 	chooseImage() {
 	  uni.chooseImage({
@@ -232,53 +263,17 @@ export default {
 	    success: async (res) => {
 			console.log('tmp file path: ', res.tempFilePaths)
 			this.imageList = this.imageList.concat(res.tempFilePaths);
-			
-			const tmpUrl = res.tempFilePaths[0];
-			
-			const cloudFileId = await this.updateImageToCloud(tmpUrl)
-			console.log('cloudFileId - ', cloudFileId)
-			
-			// // 使用 split() 方法按斜杠 '/' 分割 URL
-			// const parts = tmpUrl.split('/');
-			
-			// // 获取数组的最后一个元素，即文件名
-			// const filename = parts[parts.length - 1];
-
-			
-			// // 获取当前日期
-			// const now = new Date();
-			// const year = now.getFullYear(); // 获取当前年份
-			// const month = now.getMonth() + 1; // 获取当前月份（月份从0开始计数，所以加1）
-			// const day = now.getDate(); // 获取当前日期
-			
-			// // 格式化月份和日期，确保它们始终是两位数字
-			// const formattedMonth = month < 10 ? `0${month}` : month;
-			// const formattedDay = day < 10 ? `0${day}` : day;
-			
-			// const app = getApp();
-			// const cloudApi = await app.globalData.getCloudApi;
-			// console.log('cloudApi = ', cloudApi)
-			// // cloudApi 替代：wx.cloud
-			// cloudApi.uploadFile({
-			//   cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`, // 对象存储路径，根路径直接填文件名，文件夹例子 test/文件名，不要 / 开头
-			//   filePath: tmpUrl, // 微信本地文件，通过选择图片，聊天文件等接口获取
-			//   config: {
-			// 	env: 'prod-4g3usz1465b5625e' // 微信云托管环境ID
-			//   },
-			//   success: (res) => {
-			// 	  console.log('Update ok ', res)
-			// 	  const fileID = res.fileID
-			// 	  cloudApi.getTempFileURL({
-			// 	    fileList: [fileID], // 文件唯一标识符 cloudID, 可通过上传文件接口获取
-			// 	    success: console.log,
-			// 	    fail: console.error
-			// 	  })
-			//   },
-			//   fail: console.error
-			// })
-			
 	    }
 	  });
+	},
+	onRentFormMonthRentPriceChanged(e){
+		this.rentForm.rent_form_month_rent_price = e
+	},
+	onRentFormRentAreaChanged(e) {
+		this.rentForm.rent_form_rent_area = e
+	},
+	onCashDiscountChanged(e) {
+		this.cashDiscount.inputData = e
 	},
 	deleteImage(index) {
 	  this.imageList.splice(index, 1);
@@ -307,12 +302,35 @@ export default {
 	  const index = event.detail.value;
 	  this.rentForm.rent_form_payment_method = this.paymentMethods[index];
 	},
-	submitForm() {
-	  console.log('提交的表单数据:', this.imageList);
-	  // 提交 imageList 到 cloud 对象存储
-	  
-	  // 获取 imageList 的 cloud 数据
-	  const formCloudImageIds = this.imageList.map(id => {return id})
+	async updateImageList() {
+	  let formCloudImageIds = []
+	  for (const idx in this.imageList) {
+	    const tmpImg = this.imageList[idx];
+		const processId = parseInt(idx) + 1
+		uni.showLoading({
+		    title: `上传中 ${processId}/${this.imageList.length}`, // 显示当前进度
+		    mask: true // 防止用户触摸屏幕
+		});
+				
+	    // const cloudImageId = await this.updateImageToCloud(tmpImg);
+	    // formCloudImageIds.push(cloudImageId);
+		try {
+		    const cloudImageId = await this.updateImageToCloud(tmpImg);
+		    formCloudImageIds.push(cloudImageId);
+		} catch (error) {
+		    uni.showToast({
+		        title: '上传失败',
+		        icon: 'none'
+		    });
+			formCloudImageIds = []
+		    console.error('上传失败:', error);
+		} finally {
+		    uni.hideLoading();
+		}
+	  }
+	  return formCloudImageIds
+	},
+	async submitForm() {
 	  
 	  // 获取月租价格
 	  const formMonthRentPrice = this.rentForm.rent_form_month_rent_price
@@ -349,22 +367,129 @@ export default {
 	  // 补充信息
 	  const formAdditionalDetails = this.additionalDetails.inputData
 	  
-	  console.log('Debug form infos:', {
-		  formCloudImageIds,
-		  formCloudImageIds,
-		  formMonthRentPrice, 
-		  formRentType,
-		  formRentArea,
-		  formRentAddress,
-		  formHouseStruct,
-		  formActiveTags,
-		  formLocationPoint,
-		  formContractInformation,
-		  formCashDiscount,
-		  formAdditionalDetails,
-	  })
 	  
+	  // 验证图片列表
+	  if (!this.imageList.length) {
+	      uni.showToast({
+	          title: '请至少上传一张图片',
+	          icon: 'none'
+	      });
+	      return;
+	  }
 	  
+	  // 数据验证
+	  if (!formMonthRentPrice || isNaN(Number(formMonthRentPrice)) || Number(formMonthRentPrice) <= 0) {
+	  	  uni.showToast({
+			  title: '请输入有效的月租价格',
+			  icon: 'none'
+	  	  });
+	  	  return;
+	  }
+	  
+	  // 验证租赁类型
+	  if (!formRentType) {
+	      uni.showToast({
+	          title: '请选择租赁类型',
+	          icon: 'none'
+	      });
+	      return;
+	  }
+	
+	  if (!formRentArea || isNaN(Number(formRentArea)) || Number(formRentArea) <= 0) {
+		  uni.showToast({
+			  title: '请输入有效的租赁面积',
+			  icon: 'none'
+		  });
+		  return;
+	  }
+ 
+	  if (!formRentAddress?.trim()) {
+	      uni.showToast({
+	          title: '租赁地址不能为空',
+	          icon: 'none'
+	      });
+	      return;
+	  }
+	  
+	  // 上传图片
+	  const formCloudImageIds = await this.updateImageList()
+	  console.log('已经上传的图片 - ', formCloudImageIds)
+	  
+	  if(formCloudImageIds.length > 0) {
+		  // 图片上传成功后开始提交基础数据信息
+		  const post_data = {
+		  		 month_rent_price: formMonthRentPrice,
+		  		 rent_type: formRentType,
+		  		 rent_area: formRentArea,
+		  		 rent_address: formRentAddress,
+		  		 room_structure: formHouseStruct,
+		  		 location_longitude: formLocationPoint[0],
+		  		 location_latitude: formLocationPoint[1],
+		  		 contact_information: formContractInformation,
+		  		 cash_discount: formCashDiscount,
+		  		 additional_details: formAdditionalDetails,
+		  		 tags: formActiveTags,
+		  		 image_urls: formCloudImageIds
+		  }
+		  
+		  console.log('Debug form infos:', post_data)
+		  const app = getApp();
+		  // 
+		  // app.globalData.callWithWxCloud({
+		  // 	path: '/insertRentInfos',
+		  // 	method: 'POST',
+		  // 	data: post_data
+		  // }).then(res => {
+		  // 	console.log('Debug res', res)
+		  // });
+		  
+		  uni.showLoading({
+		      title: `提交中`, // 显示当前进度
+		      mask: true // 防止用户触摸屏幕
+		  });
+		  
+		  app.globalData.callWithWxCloud({
+		      path: '/insertRentInfos',
+		      method: 'POST',
+		      data: post_data
+		  }).then(res => {
+		      console.log('Debug res', res);
+		      if (res && res.status) {  // 假设200是操作成功的状态码
+		          uni.showToast({
+		              title: '成功等待审核',
+		              icon: 'success',
+		              duration: 2000,
+		              complete: () => {
+		                  setTimeout(() => {
+		                      // 成功后返回上一页
+		                      // uni.navigateBack({
+		                      //     delta: 1  // 返回的页面层数，1 表示返回上一层
+		                      // });
+							  // 使用 switchTab 跳转到 tabBar 页面
+							  uni.switchTab({
+							      url: '/pages/profile/index' 
+							  });
+							  uni.hideLoading();
+		                  }, 2000); // 确保提示信息显示足够时间
+		              }
+		          });
+		      } else {
+		          // 如果返回的状态码不是200，认为是失败
+		          uni.showToast({
+		              title: `数据提交失败: ${res.status}`,
+		              icon: 'none'
+		          });
+				  uni.hideLoading();
+		      }
+		  }).catch(err => {
+		      console.log('请求错误', err);
+		      uni.showToast({
+		          title: '网络或服务器错误',
+		          icon: 'none'
+		      });
+			  uni.hideLoading();
+		  });
+	  }
 	},
 	toggleContactInformation(event) {
 		console.log('Debug. toggleCashDiscount --  ', this.contactInformation.isChecked)
@@ -429,7 +554,7 @@ export default {
 	  });
 	},
 	onMapTap(e) {
-		console.log('onMapTap - -- debug.')
+		
 		// 获取点击位置的经纬度
 		const latitude = e.detail.latitude;
 		const longitude = e.detail.longitude;
@@ -445,6 +570,8 @@ export default {
 		// 可以选择更新视图中心点为新标记点
 		this.mapLocation.latitude = latitude;
 		this.mapLocation.longitude = longitude;
+		console.log('onMapTap -- debug , old ', [latitude, longitude])
+		console.log('onMapTap - -- debug chage latitude & longitude.', [this.mapLocation.latitude, this.mapLocation.longitude])
 	},
 	requestLocationPermission() {
 	  uni.authorize({
@@ -624,4 +751,14 @@ input, textarea, picker {
   color: #ccc;
 }
 
+</style>
+<style>
+	.number-input {
+		width: 100%;
+		padding-bottom: 10px;
+		padding-top: 10px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		color: darkred;
+	}
 </style>

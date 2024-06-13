@@ -1,0 +1,16 @@
+
+.form-item.data-v-e4edcda6 {
+  margin-bottom: 15px;
+}
+.label.data-v-e4edcda6 {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.uni-list.data-v-e4edcda6 {
+  width: 100%;
+}
+.uni-input.data-v-e4edcda6 {
+  padding: 10px;
+  background-color: #f8f8f8;
+}

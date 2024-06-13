@@ -67,6 +67,7 @@
 				avatarUrl: 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'
 			},
 			getCloudApi: getCloudApi(),
+			callWithWxCloud
 		},  
 		callWithWxCloud,
 		onLaunch: function() {
@@ -94,10 +95,7 @@
 
 				    // 使用头像和昵称
 					console.log({userInfo})
-					
-					console.log('--1')
 					that.globalData.userInfo = userInfo
-					console.log('--2')
 					
 					callWithWxCloud({
 						path: '/registerUser',
@@ -113,46 +111,6 @@
 				  }
 				});
 			}
-			
-			// if(wx.cloud){
-			// 	console.log('DEBUG, wx.cloud.')
-			// 	callWithWxCloud({
-			// 		path: '/',
-			// 		method: 'GET'
-			// 	}).then(res => {
-			// 		console.log('Debug res', res)
-			// 	});
-			// }
-			
-			// // 初始化云服务
-			// if (wx.cloud) {
-			//   console.log('存在 wx.cloud');
-			//   this.globalData.isWxEnv = true;
-			  
-			//   wx.cloud.init();
-			
-			//   wx.cloud.callContainer({
-			//       config: {
-			//           env: "prod-4g3usz1465b5625e"
-			//       },
-			//       path: "/",  // 设置为你的后端服务的具体路径
-			//       header: {
-			//           "X-WX-SERVICE": "express-8zu8",
-			//           "content-type": "application/json"
-			//       },
-			//       method: "GET",
-			//       data: "",  // 如果是 GET 请求，通常 data 为空
-			//       success: function(res) {
-			//           console.log('请求成功', res);
-			//       },
-			//       fail: function(error) {
-			//           console.log('请求失败', error);
-			//       }
-			//   });
-				  
-			// } else {
-			//   console.error('请确保微信基础库版本支持云能力')
-			// }
 		},
 		onShow: function() {
 			console.log('App Show')

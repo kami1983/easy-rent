@@ -92,13 +92,33 @@ const def = (obj, key, value) => {
   });
 };
 const looseToNumber = (val) => {
-  const n = parseFloat(val);
-  return isNaN(n) ? val : n;
+  const n2 = parseFloat(val);
+  return isNaN(n2) ? val : n2;
 };
 let _globalThis;
 const getGlobalThis = () => {
   return _globalThis || (_globalThis = typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {});
 };
+function normalizeClass(value) {
+  let res = "";
+  if (isString(value)) {
+    res = value;
+  } else if (isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      const normalized = normalizeClass(value[i]);
+      if (normalized) {
+        res += normalized + " ";
+      }
+    }
+  } else if (isObject(value)) {
+    for (const name in value) {
+      if (value[name]) {
+        res += name + " ";
+      }
+    }
+  }
+  return res.trim();
+}
 const toDisplayString = (val) => {
   return isString(val) ? val : val == null ? "" : isArray(val) || isObject(val) && (val.toString === objectToString || !isFunction(val.toString)) ? JSON.stringify(val, replacer, 2) : String(val);
 };
@@ -961,7 +981,7 @@ const $off = defineSyncApi(API_OFF, (name, callback) => {
   }
   if (!isArray(name))
     name = [name];
-  name.forEach((n) => emitter.off(n, callback));
+  name.forEach((n2) => emitter.off(n2, callback));
 }, OffProtocol);
 const $emit = defineSyncApi(API_EMIT, (name, ...args) => {
   emitter.emit(name, ...args);
@@ -6748,6 +6768,7 @@ function vFor(source, renderItem) {
 const o = (value, key) => vOn(value, key);
 const f = (source, renderItem) => vFor(source, renderItem);
 const e = (target, ...sources) => extend(target, ...sources);
+const n = (value) => normalizeClass(value);
 const t = (val) => toDisplayString(val);
 const p = (props) => renderProps(props);
 function createApp$1(rootComponent, rootProps = null) {
@@ -7586,6 +7607,7 @@ exports.createSSRApp = createSSRApp;
 exports.e = e;
 exports.f = f;
 exports.index = index;
+exports.n = n;
 exports.o = o;
 exports.p = p;
 exports.resolveComponent = resolveComponent;

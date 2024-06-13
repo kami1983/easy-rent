@@ -1,0 +1,1 @@
+<input class="{{a}}" type="text" placeholder="{{b}}" value="{{c}}" bindinput="{{d}}"/>
