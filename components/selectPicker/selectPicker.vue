@@ -1,6 +1,4 @@
 <template>
-  <view class="form-item">
-    <text class="label">------- {{ label }} -------- </text>
     <view class="uni-list">
       <view class="uni-list-cell">
         <view class="uni-list-cell-db">
@@ -10,7 +8,6 @@
         </view>
       </view>
     </view>
-  </view>
 </template>
 
 <script>
@@ -46,14 +43,14 @@ export default {
 </script>
 
 <style scoped>
-.form-item {
+/* .form-item {
   margin-bottom: 15px;
 }
 .label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
-}
+} */
 .uni-list {
   width: 100%;
 }

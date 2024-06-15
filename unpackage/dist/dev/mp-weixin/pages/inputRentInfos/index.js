@@ -2,10 +2,18 @@
 const common_vendor = require("../../common/vendor.js");
 const NumberInput = () => "../../components/numberInput/numberInput.js";
 const HouseSpecPicker = () => "../../components/selectPicker/selectPicker.js";
+const RentTypePicker = () => "../../components/radioPicker/radioPicker.js";
+const TagsPicker = () => "../../components/tagsPicker/tagsPicker.js";
+const MapPicker = () => "../../components/mapPicker/mapPicker.js";
+const ImagePicker = () => "../../components/imagePicker/imagePicker.js";
 const _sfc_main = {
   components: {
     NumberInput,
-    HouseSpecPicker
+    HouseSpecPicker,
+    RentTypePicker,
+    TagsPicker,
+    MapPicker,
+    ImagePicker
   },
   data() {
     return {
@@ -104,17 +112,6 @@ const _sfc_main = {
       console.log("Selected indices:", newIndex);
       this.multiIndex = newIndex;
     },
-    handleInput(event) {
-      console.log("HandleInput runing.");
-      const value = event.detail.value;
-      const filteredValue = value.replace(/[^0-9.]/g, "").replace(/(\..*)\./g, "$1");
-      console.log({ value, filteredValue });
-      if (value !== filteredValue) {
-        return filteredValue;
-      }
-      this.cashDiscount.inputData = value;
-      return value;
-    },
     chooseImage() {
       common_vendor.index.chooseImage({
         count: 9 - this.imageList.length,
@@ -155,8 +152,11 @@ const _sfc_main = {
       this.selectedHall = this.roomStruct.halls[val[1]];
       this.selectedBathroom = this.roomStruct.bathrooms[val[2]];
     },
-    onRentTypeChange(event) {
-      this.rentForm.rent_form_rent_type = event.detail.value;
+    // onRentTypeChange(event) {
+    //   this.rentForm.rent_form_rent_type = event.detail.value;
+    // },
+    onRentTypeChange(newType) {
+      this.rentForm.rent_form_rent_type = newType;
     },
     onPaymentMethodChange(event) {
       const index = event.detail.value;
@@ -357,27 +357,20 @@ const _sfc_main = {
         }
       });
     },
-    onMapTap(e) {
-      const latitude = e.detail.latitude;
-      const longitude = e.detail.longitude;
-      this.mapLocation.markers = [{
-        // iconPath: "/static/logo.png",
-        id: 0,
-        latitude,
-        longitude,
-        width: 20,
-        height: 30
-      }];
-      this.mapLocation.latitude = latitude;
-      this.mapLocation.longitude = longitude;
-      console.log("onMapTap -- debug , old ", [latitude, longitude]);
-      console.log("onMapTap - -- debug chage latitude & longitude.", [this.mapLocation.latitude, this.mapLocation.longitude]);
+    handleMapTap(e) {
+      this.mapLocation.latitude = e.latitude;
+      this.mapLocation.longitude = e.longitude;
+      console.log("RUN e", e);
+    },
+    handleImageListUpdate(newImageList) {
+      console.log("newImageList", newImageList);
+      this.imageList = newImageList;
     },
     requestLocationPermission() {
       common_vendor.index.authorize({
         scope: "scope.userLocation",
         success: () => {
-          console.log("位置授权成功A");
+          console.log("位置授权成功");
           this.isLocationAuthorized = true;
         },
         fail: () => {
@@ -389,105 +382,81 @@ const _sfc_main = {
           });
         }
       });
-    },
-    bindMultiPickerColumnChange: function(e) {
-      console.log("修改的列为：" + e.detail.column + "，值为：" + e.detail.value);
-      this.multiIndex[e.detail.column] = e.detail.value;
-      this.$forceUpdate();
     }
   }
 };
 if (!Array) {
+  const _component_ImagePicker = common_vendor.resolveComponent("ImagePicker");
   const _component_NumberInput = common_vendor.resolveComponent("NumberInput");
+  const _component_RentTypePicker = common_vendor.resolveComponent("RentTypePicker");
   const _component_HouseSpecPicker = common_vendor.resolveComponent("HouseSpecPicker");
-  (_component_NumberInput + _component_HouseSpecPicker)();
+  const _component_TagsPicker = common_vendor.resolveComponent("TagsPicker");
+  const _component_MapPicker = common_vendor.resolveComponent("MapPicker");
+  (_component_ImagePicker + _component_NumberInput + _component_RentTypePicker + _component_HouseSpecPicker + _component_TagsPicker + _component_MapPicker)();
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
-    a: common_vendor.f($data.imageList, (img, index, i0) => {
-      return {
-        a: img,
-        b: common_vendor.o(($event) => $options.deleteImage(index), index),
-        c: index
-      };
+    a: common_vendor.o($options.handleImageListUpdate),
+    b: common_vendor.p({
+      ["initial-image-list"]: $data.imageList
     }),
-    b: $data.imageList.length < 9
-  }, $data.imageList.length < 9 ? {
-    c: common_vendor.o((...args) => $options.chooseImage && $options.chooseImage(...args))
-  } : {}, {
-    d: common_vendor.o($options.onRentFormMonthRentPriceChanged),
-    e: common_vendor.p({
+    c: common_vendor.o($options.onRentFormMonthRentPriceChanged),
+    d: common_vendor.p({
       placeholder: "请输入月租价格",
       ["class-name"]: "number-input"
     }),
-    f: common_vendor.f($data.rentTypes, (item, index, i0) => {
-      return {
-        a: common_vendor.t(item),
-        b: item,
-        c: $data.rentForm.rent_form_rent_type === item,
-        d: index
-      };
+    e: common_vendor.o($options.onRentTypeChange),
+    f: common_vendor.p({
+      options: $data.rentTypes,
+      selected: $data.rentForm.rent_form_rent_type
     }),
-    g: common_vendor.o((...args) => $options.onRentTypeChange && $options.onRentTypeChange(...args)),
-    h: common_vendor.o($options.onRentFormRentAreaChanged),
-    i: common_vendor.p({
+    g: common_vendor.o($options.onRentFormRentAreaChanged),
+    h: common_vendor.p({
       placeholder: "请输入租赁面积",
       ["class-name"]: "number-input"
     }),
-    j: $data.rentForm.rent_form_address,
-    k: common_vendor.o(($event) => $data.rentForm.rent_form_address = $event.detail.value),
-    l: common_vendor.t($data.multiArray[0][$data.multiIndex[0]]),
-    m: common_vendor.t($data.multiArray[1][$data.multiIndex[1]]),
-    n: common_vendor.t($data.multiArray[2][$data.multiIndex[2]]),
-    o: common_vendor.o((...args) => $options.bindMultiPickerColumnChange && $options.bindMultiPickerColumnChange(...args)),
-    p: $data.multiIndex,
-    q: $data.multiArray,
-    r: common_vendor.o($options.onSpecChange),
-    s: common_vendor.p({
-      label: "Test",
+    i: $data.rentForm.rent_form_address,
+    j: common_vendor.o(($event) => $data.rentForm.rent_form_address = $event.detail.value),
+    k: common_vendor.o($options.onSpecChange),
+    l: common_vendor.p({
       ["multi-array"]: $data.multiArray
     }),
-    t: common_vendor.f($data.tags, (tag, index, i0) => {
-      return {
-        a: common_vendor.t(tag.name),
-        b: index,
-        c: tag.active ? 1 : "",
-        d: common_vendor.o(($event) => $options.toggleTag(index), index)
-      };
+    m: common_vendor.o($options.toggleTag),
+    n: common_vendor.p({
+      tags: $data.tags
     }),
-    v: $data.mapLocation.longitude,
-    w: $data.mapLocation.latitude,
-    x: common_vendor.o((...args) => $options.onMapTap && $options.onMapTap(...args)),
-    y: $data.mapLocation.markers,
-    z: !$data.isLocationAuthorized
-  }, !$data.isLocationAuthorized ? {
-    A: common_vendor.o((...args) => $options.requestLocationPermission && $options.requestLocationPermission(...args))
-  } : {}, {
-    B: $data.contactInformation.isChecked,
-    C: common_vendor.o((...args) => $options.toggleContactInformation && $options.toggleContactInformation(...args)),
-    D: this.contactInformation.isChecked
+    o: common_vendor.o($options.handleMapTap),
+    p: common_vendor.p({
+      longitude: $data.mapLocation.longitude,
+      latitude: $data.mapLocation.latitude,
+      markers: $data.mapLocation.markers,
+      isLocationAuthorized: $data.isLocationAuthorized
+    }),
+    q: $data.contactInformation.isChecked,
+    r: common_vendor.o((...args) => $options.toggleContactInformation && $options.toggleContactInformation(...args)),
+    s: this.contactInformation.isChecked
   }, this.contactInformation.isChecked ? {
-    E: this.contactInformation.inputData,
-    F: common_vendor.o(($event) => this.contactInformation.inputData = $event.detail.value)
+    t: this.contactInformation.inputData,
+    v: common_vendor.o(($event) => this.contactInformation.inputData = $event.detail.value)
   } : {}, {
-    G: $data.cashDiscount.isChecked,
-    H: common_vendor.o((...args) => $options.toggleCashDiscount && $options.toggleCashDiscount(...args)),
-    I: this.cashDiscount.isChecked
+    w: $data.cashDiscount.isChecked,
+    x: common_vendor.o((...args) => $options.toggleCashDiscount && $options.toggleCashDiscount(...args)),
+    y: this.cashDiscount.isChecked
   }, this.cashDiscount.isChecked ? {
-    J: common_vendor.o($options.onCashDiscountChanged),
-    K: common_vendor.p({
+    z: common_vendor.o($options.onCashDiscountChanged),
+    A: common_vendor.p({
       placeholder: "优惠金额(数值)",
       ["class-name"]: "number-input"
     })
   } : {}, {
-    L: $data.additionalDetails.isChecked,
-    M: common_vendor.o((...args) => $options.toggleAdditionalDetails && $options.toggleAdditionalDetails(...args)),
-    N: this.additionalDetails.isChecked
+    B: $data.additionalDetails.isChecked,
+    C: common_vendor.o((...args) => $options.toggleAdditionalDetails && $options.toggleAdditionalDetails(...args)),
+    D: this.additionalDetails.isChecked
   }, this.additionalDetails.isChecked ? {
-    O: this.additionalDetails.inputData,
-    P: common_vendor.o(($event) => this.additionalDetails.inputData = $event.detail.value)
+    E: this.additionalDetails.inputData,
+    F: common_vendor.o(($event) => this.additionalDetails.inputData = $event.detail.value)
   } : {}, {
-    Q: common_vendor.o((...args) => $options.submitForm && $options.submitForm(...args))
+    G: common_vendor.o((...args) => $options.submitForm && $options.submitForm(...args))
   });
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-097448e0"], ["__file", "/Users/kami-m1/work-files/coding/git-files/kami-self/contact-us/easy-rent/pages/inputRentInfos/index.vue"]]);

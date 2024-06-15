@@ -3,7 +3,7 @@
 	  
 	<!-- 图片上传 -->
 	<view class="form-item img-container">
-		 <view class="image-list">
+		 <!-- <view class="image-list">
 		   <view v-for="(img, index) in imageList" :key="index" class="image-item">
 		     <image :src="img" class="image-preview"/>
 		     <view class="delete-icon" @tap="deleteImage(index)">✖️</view>
@@ -12,7 +12,8 @@
 		     <view class="icon">+</view>
 		     <text>添加图片</text>
 		   </view>
-		 </view>
+		 </view> -->
+		<ImagePicker :initial-image-list="imageList" @update:imageList="handleImageListUpdate"/>
 	</view>
 	  
 	<view class="form-item">
@@ -21,11 +22,11 @@
 	</view>
     <!-- 租赁类型选择器 -->
     <view class="form-item">
-      <radio-group @change="onRentTypeChange">
-        <label class="radio-label" v-for="(item, index) in rentTypes" :key="index">
-          <radio :value="item" :checked="rentForm.rent_form_rent_type === item">{{ item }}</radio>
-        </label>
-      </radio-group>
+	  <RentTypePicker
+	        :options="rentTypes"
+	        :selected="rentForm.rent_form_rent_type"
+	        @update:selected="onRentTypeChange"
+	      />
     </view>
 	
 	<view class="form-item">
@@ -40,24 +41,11 @@
 	
 	<!-- #ifndef MP-ALIPAY -->
 	<view class="form-item">
-		<text class="label">房屋规格2：</text>
-		<view class="uni-list">
-			<view class="uni-list-cell">
-				<view class="uni-list-cell-db">
-					<picker mode="multiSelector" @columnchange="bindMultiPickerColumnChange" :value="multiIndex" :range="multiArray">
-						<view class="uni-input">{{multiArray[0][multiIndex[0]]}}，{{multiArray[1][multiIndex[1]]}}，{{multiArray[2][multiIndex[2]]}}</view>
-					</picker>
-				</view>
-			</view>
-		</view>
-	</view>
-	<view class="form-item">
-		<label>XXXXXXXXXXXXXXXXXXXXXXXXX</label>
-		<HouseSpecPicker label="Test" :multi-array="multiArray" @change="onSpecChange" />
+		<text class="label">房屋规格：</text>
+		<HouseSpecPicker :multi-array="multiArray" @change="onSpecChange" />
 	</view>
 	<!-- #endif -->
 	
-
     <!-- 付款方式选择器 -->
     <!-- view class="form-item">
       <picker mode="selector" :range="paymentMethods" @change="onPaymentMethodChange">
@@ -67,28 +55,16 @@
 
 	<view class="form-item">
 		<view class="label">其他描述:</view>
-		<view class="tags">
-		  <view v-for="(tag, index) in tags" :key="index" 
-		    class="tag" :class="{ active: tag.active }"
-		    @tap="toggleTag(index)">
-		    {{ tag.name }}
-		  </view>
-		</view>
+		<TagsPicker :tags="tags" @toggle="toggleTag" />
 	</view>
 
     <!-- 地图展示 -->
-    <view class="map-container">
-		<map class="map"
-			id="map"
-			:longitude="mapLocation.longitude"
-			:latitude="mapLocation.latitude"
-			scale="14"
-			show-location="true"
-			@tap="onMapTap"
-			:markers="mapLocation.markers">
-			</map>
-		<button v-if="!isLocationAuthorized" class="map-center-button" @tap="requestLocationPermission">点击授权位置</button>
-    </view>
+    <MapPicker :longitude="mapLocation.longitude"
+                   :latitude="mapLocation.latitude"
+                   :markers="mapLocation.markers"
+                   :isLocationAuthorized="isLocationAuthorized"
+                   @center-map="handleMapTap"/>
+    			   
 	
 	<view class="form-item">
 	  <checkbox-group @change="toggleContactInformation">
@@ -127,13 +103,21 @@
 <script>
 import NumberInput from '@/components/numberInput/numberInput.vue';
 import HouseSpecPicker from '@/components/selectPicker/selectPicker.vue';
+import RentTypePicker from '@/components/radioPicker/radioPicker.vue';
+import TagsPicker from '@/components/tagsPicker/tagsPicker.vue';
+import MapPicker from '@/components/mapPicker/mapPicker.vue';
+import ImagePicker from '@/components/imagePicker/imagePicker.vue';
 
 	
 export default {
 	components: {
 	    NumberInput,
-		HouseSpecPicker
-	  },
+		HouseSpecPicker,
+		RentTypePicker,
+		TagsPicker,
+		MapPicker,
+		ImagePicker
+	},
 	data() {
 		return {
 			mapLocation: {
@@ -238,23 +222,6 @@ export default {
 		console.log('Selected indices:', newIndex);
 		this.multiIndex = newIndex
 	},
-	handleInput(event) {
-	  console.log('HandleInput runing.')
-	  // 获取输入的内容
-	  const value = event.detail.value;
-	  // 移除非数字字符
-	  // const filteredValue = value.replace(/\D/g, '');
-	  const filteredValue = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-	  
-	  console.log({value, filteredValue})
-	  // 更新数据
-	  if (value !== filteredValue) {
-	    // 此处设置数据需要根据实际数据路径设置
-	    return filteredValue;
-	  }
-	  this.cashDiscount.inputData = value;
-	  return value;
-	},
 	chooseImage() {
 	  uni.chooseImage({
 	    count: 9 - this.imageList.length,
@@ -295,8 +262,11 @@ export default {
 	    this.selectedHall = this.roomStruct.halls[val[1]];
 	    this.selectedBathroom = this.roomStruct.bathrooms[val[2]];
 	},
-	onRentTypeChange(event) {
-	  this.rentForm.rent_form_rent_type = event.detail.value;
+	// onRentTypeChange(event) {
+	//   this.rentForm.rent_form_rent_type = event.detail.value;
+	// },
+	onRentTypeChange(newType) {
+	    this.rentForm.rent_form_rent_type = newType;
 	},
 	onPaymentMethodChange(event) {
 	  const index = event.detail.value;
@@ -553,31 +523,20 @@ export default {
 	    }
 	  });
 	},
-	onMapTap(e) {
-		
-		// 获取点击位置的经纬度
-		const latitude = e.detail.latitude;
-		const longitude = e.detail.longitude;
-		// 更新标记
-		this.mapLocation.markers = [{
-			// iconPath: "/static/logo.png",
-			id: 0,
-			latitude: latitude,
-			longitude: longitude,
-			width: 20,
-			height: 30
-		}];	
-		// 可以选择更新视图中心点为新标记点
-		this.mapLocation.latitude = latitude;
-		this.mapLocation.longitude = longitude;
-		console.log('onMapTap -- debug , old ', [latitude, longitude])
-		console.log('onMapTap - -- debug chage latitude & longitude.', [this.mapLocation.latitude, this.mapLocation.longitude])
+	handleMapTap(e) {
+		this.mapLocation.latitude = e.latitude;
+		this.mapLocation.longitude = e.longitude;
+		console.log('RUN e', e)
+	},
+	handleImageListUpdate(newImageList) {
+		console.log('newImageList', newImageList)
+	    this.imageList = newImageList;
 	},
 	requestLocationPermission() {
 	  uni.authorize({
 	    scope: 'scope.userLocation',
 	    success: () => {
-		  console.log('位置授权成功A');
+		  console.log('位置授权成功');
 		  this.isLocationAuthorized = true;
 	    },
 	    fail: () => {
@@ -589,11 +548,6 @@ export default {
 	      });
 	    }
 	  });
-	},
-	bindMultiPickerColumnChange: function(e) {
-		console.log('修改的列为：' + e.detail.column + '，值为：' + e.detail.value)
-		this.multiIndex[e.detail.column] = e.detail.value
-		this.$forceUpdate()
 	}
   }
 }
@@ -699,13 +653,8 @@ input, textarea, picker {
   border-color: #007AFF;
 }
 
-
 .img-container {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   background-color: #f5f5f5;
-  justify-content: space-around;
 }
 .image-list {
   display: flex;

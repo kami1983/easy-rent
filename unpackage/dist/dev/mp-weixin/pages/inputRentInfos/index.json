@@ -2,6 +2,10 @@
   "navigationBarTitleText": "添加租房信息",
   "usingComponents": {
     "number-input": "../../components/numberInput/numberInput",
-    "house-spec-picker": "../../components/selectPicker/selectPicker"
+    "house-spec-picker": "../../components/selectPicker/selectPicker",
+    "rent-type-picker": "../../components/radioPicker/radioPicker",
+    "tags-picker": "../../components/tagsPicker/tagsPicker",
+    "map-picker": "../../components/mapPicker/mapPicker",
+    "image-picker": "../../components/imagePicker/imagePicker"
   }
 }

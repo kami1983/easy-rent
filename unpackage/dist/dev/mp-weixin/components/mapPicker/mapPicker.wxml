@@ -1,0 +1,1 @@
+<view class="map-container data-v-9c869d3d"><map class="map data-v-9c869d3d" longitude="{{a}}" latitude="{{b}}" scale="{{c}}" show-location="true" bindtap="{{d}}" markers="{{e}}"></map><button wx:if="{{f}}" class="map-center-button data-v-9c869d3d" bindtap="{{g}}"> 点击授权位置 </button></view>

@@ -1,12 +1,12 @@
 
-.form-item.data-v-e4edcda6 {
+/* .form-item {
   margin-bottom: 15px;
 }
-.label.data-v-e4edcda6 {
+.label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
-}
+} */
 .uni-list.data-v-e4edcda6 {
   width: 100%;
 }
