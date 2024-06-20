@@ -7,6 +7,13 @@ const _sfc_main = {
     loginRegister,
     myAssets
   },
+  onPullDownRefresh() {
+    console.log("onPullDownRefresh -- RUN == DEBUG 1 ");
+  },
+  // 触底的事件
+  onReachBottom() {
+    console.log("onReachBottom -- RUN == DEBUG 2 ");
+  },
   onLoad() {
     const app = getApp();
     this.userInfo = app.globalData.userInfo;
@@ -15,8 +22,7 @@ const _sfc_main = {
     return {
       userInfo: {}
     };
-  },
-  methods: {}
+  }
 };
 if (!Array) {
   const _component_login_register = common_vendor.resolveComponent("login-register");

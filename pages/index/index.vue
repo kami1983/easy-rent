@@ -24,25 +24,16 @@
 			details="整租 2室1厅1卫"
 			address="北京市通州区嘉创路10号" />
 			
-		<!-- <button type="primary" @click="buttonClick_changeText">修改文字内容</button>
-		<button @click="buttonClick_showHide">点击让文字组件显示或消失</button>
-		<button @click="buttonClick_changeColor">修改文字颜色</button> -->
 	</scroll-view>
-	<label>{{inputData}}</label>
-	<NumberInput @onChange="onChange" placeholder="NUMBER" class-name="number-input" />
 </template>
 
 <script>
 	
 	import promoBanner from '@/components/promoBanner/promoBanner.vue';
 	import houseItem from '@/components/houseItem/houseItem.vue';
-	// import pageHead from '@/components/pageHead/pageHead.vue';
-	
-	import NumberInput from '@/components/numberInput/numberInput.vue';
 	
 	export default {
 		components: {
-			NumberInput,
 			promoBanner,
 			houseItem
 		},

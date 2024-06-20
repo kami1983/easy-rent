@@ -20,6 +20,14 @@
 			loginRegister,
 			myAssets
 		},
+		onPullDownRefresh() {
+			console.log('onPullDownRefresh -- RUN == DEBUG 1 ')
+			// this.getGoodsList(() => uni.stopPullDownRefresh())
+		},
+		// 触底的事件
+		onReachBottom() {
+		  console.log('onReachBottom -- RUN == DEBUG 2 ')
+		},
 		onLoad() {
 		  const app = getApp();
 		  this.userInfo = app.globalData.userInfo;
@@ -29,9 +37,6 @@
 			return {
 				userInfo: {}
 			}
-		},
-		methods: {
-
 		}
 	}
 </script>

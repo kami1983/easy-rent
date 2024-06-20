@@ -46,7 +46,7 @@ const _sfc_main = {
       rentTypes: ["整租", "合租", "转租"],
       paymentMethods: ["月付", "季付", "半年付", "年付"],
       multiArray: [
-        ["一室A", "二室B", "三室", "四室"],
+        ["一室", "二室", "三室", "四室"],
         ["开间", "一厅", "两厅"],
         ["一卫", "双卫", "三卫"]
       ],
@@ -253,7 +253,9 @@ const _sfc_main = {
           cash_discount: formCashDiscount,
           additional_details: formAdditionalDetails,
           tags: formActiveTags,
-          image_urls: formCloudImageIds
+          image_urls: formCloudImageIds,
+          status: 0,
+          type: 0
         };
         console.log("Debug form infos:", post_data);
         const app = getApp();
