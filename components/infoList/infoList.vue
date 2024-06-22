@@ -42,7 +42,7 @@ export default {
         }
     },
     mounted() {
-        this.fetchRentInfos();
+        this.fetchRentInfosOnMine();
     },
     methods: {
 		handleTap(item) {
@@ -54,50 +54,6 @@ export default {
 		        this.confirmDeletion(item);
 		    }
 		},
-        // async fetchRentInfos() {
-        //     const app = getApp();
-        //     try {
-        //         const response = await app.globalData.callWithWxCloud({
-        //             path: '/user/rent-infos',
-        //             data: {
-        //                 page: this.page,
-        //                 limit: this.limit
-        //             },
-        //             method: 'GET'
-        //         });
-        //         if (response.status) {
-        //             const newProperties = response.backData.map(item => ({
-        //                 ...item,
-        //                 update_diff: 7 - this.calculateDateDifference(item.updated_at)
-        //             }));
-
-        //             this.properties = [...this.properties, ...newProperties];
-        //             if (newProperties.length < this.limit) {
-        //                 this.noMoreData = true;
-        //             } else {
-        //                 this.page++;
-        //             }
-        //         } else {
-        //             uni.showToast({
-        //                 title: '获取数据失败',
-        //                 icon: 'none'
-        //             });
-        //         }
-        //     } catch (error) {
-        //         console.error('请求错误:', error);
-        //         uni.showToast({
-        //             title: '网络或服务器错误',
-        //             icon: 'none'
-        //         });
-        //     }
-        // },
-        calculateDateDifference(updatedAt) {
-            const now = new Date();
-            const updatedDate = new Date(updatedAt);
-            const diffTime = Math.abs(now - updatedDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays;
-        },
 		async refreshRent(rentId) {
 		    const app = getApp();
 		    try {
@@ -138,45 +94,6 @@ export default {
 		        });
 		    }
 		},
-		// async getCloudImagesListByRentId(rentId) {
-		//     const app = getApp();
-		//     try {
-		//         // Making an API call to your server to get the list of images for a specific rent ID
-		//         const response = await app.globalData.callWithWxCloud({
-		//             path: '/user/rent-images',
-		//             data: { rentid: rentId },
-		//             method: 'GET'
-		//         });
-		
-		//         console.log('DEBUG /user/rent-images', { rentId, response });
-		
-		//         // Check if the response was successful
-		//         if (response.status) {
-		//             // Assuming response.backData is the array of image objects
-		//             const images = response.backData.map(image => ({
-		//                 id: image.id,
-		//                 url: image.image_url,
-		//                 createdAt: image.created_at,
-		//                 updatedAt: image.updated_at
-		//             }));
-		
-		//             return images;  // Return the mapped array of images
-		//         } else {
-		//             uni.showToast({
-		//                 title: '图片加载失败',
-		//                 icon: 'none'
-		//             });
-		//             return [];  // Return an empty array or handle accordingly
-		//         }
-		//     } catch (error) {
-		//         console.error('请求错误:', error);
-		//         uni.showToast({
-		//             title: '网络或服务器错误',
-		//             icon: 'none'
-		//         });
-		//         return [];  // Return an empty array in case of an error
-		//     }
-		// },
 		confirmDeletion(item) {
 			console.log('confirmDeletion --- ')
 		    uni.showModal({
@@ -280,7 +197,7 @@ export default {
 			}
 		},
         loadMore() {
-            this.fetchRentInfos();
+            this.fetchRentInfosOnMine();
         }
     }
 }

@@ -47,10 +47,12 @@
 	  } catch(e){
 	    const error = e.toString()
 	     // 如果错误信息为未初始化，则等待300ms再次尝试，因为init过程是异步的
+		 console.log("Cloud API isn't enabled", error)
 	    if(error.indexOf("Cloud API isn't enabled")!=-1 && number<3){
 	      return new Promise((resolve)=>{
 	        setTimeout(function(){
-	          resolve(that.call(obj,number+1))
+	          // resolve(that.call(obj,number+1))
+			  resolve(that.callWithWxCloud(obj, number + 1));
 	        },300)
 	      })
 	    } else {

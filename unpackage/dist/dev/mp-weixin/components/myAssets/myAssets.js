@@ -2,13 +2,22 @@
 const common_vendor = require("../../common/vendor.js");
 const infoList = () => "../infoList/infoList.js";
 const _sfc_main = {
+  props: {
+    initialTab: {
+      type: String,
+      default: "rent"
+    }
+  },
   components: {
     infoList
   },
   data() {
     return {
-      currentTab: "rent"
+      currentTab: this.initialTab
     };
+  },
+  created() {
+    console.log("DEBUG- My assets created with initial tab:", this.currentTab);
   },
   methods: {
     switchTab(tab) {

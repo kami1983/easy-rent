@@ -14,7 +14,11 @@ const _sfc_main = {
   onReachBottom() {
     console.log("onReachBottom -- RUN == DEBUG 2 ");
   },
+  onShow() {
+    console.log("InfoList on Show");
+  },
   onLoad() {
+    console.log("onLoad on Show");
     const app = getApp();
     this.userInfo = app.globalData.userInfo;
   },
@@ -33,6 +37,9 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
     a: common_vendor.p({
       ["user-info"]: $data.userInfo
+    }),
+    b: common_vendor.p({
+      ["initial-tab"]: "search"
     })
   };
 }

@@ -3,16 +3,6 @@
 	  
 	<!-- 图片上传 -->
 	<view class="form-item img-container">
-		 <!-- <view class="image-list">
-		   <view v-for="(img, index) in imageList" :key="index" class="image-item">
-		     <image :src="img" class="image-preview"/>
-		     <view class="delete-icon" @tap="deleteImage(index)">✖️</view>
-		   </view>
-		   <view v-if="imageList.length < 9" @tap="chooseImage" class="add-image">
-		     <view class="icon">+</view>
-		     <text>添加图片</text>
-		   </view>
-		 </view> -->
 		<ImagePicker :initial-image-list="imageList" @update:imageList="handleImageListUpdate"/>
 	</view>
 	  
@@ -192,7 +182,6 @@ export default {
 	  // Assuming getApp() and globalData.getCloudApi are correct references for your environment
 	  const app = getApp();
 	  const cloudApi = await app.globalData.getCloudApi;
-	  console.log('cloudApi = ', cloudApi);
 	
 	  try {
 	    const res = await new Promise((resolve, reject) => {
@@ -262,9 +251,6 @@ export default {
 	    this.selectedHall = this.roomStruct.halls[val[1]];
 	    this.selectedBathroom = this.roomStruct.bathrooms[val[2]];
 	},
-	// onRentTypeChange(event) {
-	//   this.rentForm.rent_form_rent_type = event.detail.value;
-	// },
 	onRentTypeChange(newType) {
 	    this.rentForm.rent_form_rent_type = newType;
 	},
@@ -334,7 +320,6 @@ export default {
 	  
 	  // 补充信息
 	  const formAdditionalDetails = this.additionalDetails.inputData
-	  
 	  
 	  // 验证图片列表
 	  if (!this.imageList.length) {

@@ -5,14 +5,9 @@
 		subtitle="免费社区信息交换平台"
 		description="无中介 ｜ 换房需求 ｜ 租房信息"
 		 />
-		<!-- <testApis/> -->
-		<house-item 
-			imageSrc="/static/rent-background.png"
-			title="开饭群岛旺铺招租"
-			details="整租 2室1厅1卫"
-			address="北京市通州区嘉创路10号" />
+		
 		  
-		<house-item
+		<!-- <house-item
 			imageSrc="/static/rent-background.png"
 			title="开饭群岛旺铺招租"
 			details="整租 2室1厅1卫"
@@ -22,35 +17,66 @@
 			imageSrc="/static/rent-background.png"
 			title="开饭群岛旺铺招租"
 			details="整租 2室1厅1卫"
-			address="北京市通州区嘉创路10号" />
+			address="北京市通州区嘉创路10号" /> -->
+			
+		<house-item
+		        v-for="(item, index) in properties"
+		        :key="index"
+		        :imageSrc="item.tmp_image_url || '/static/default-placeholder.png'"
+		        :title="item.rent_address"
+		        :details="item.rent_type"
+		        :address="item.tags"
+		      />
+	  
+		<view v-if="properties.length === 0" class="no-data">
+		  <house-item
+		  	imageSrc=""
+		  	title=""
+		  	details=""
+		  	address="" />
+		</view>
 			
 	</scroll-view>
+	<button v-if="!noMoreData" @click="loadMore" class="load-more-button">加载更多</button>
 </template>
 
 <script>
 	
 	import promoBanner from '@/components/promoBanner/promoBanner.vue';
 	import houseItem from '@/components/houseItem/houseItem.vue';
+	import rentMixin from '@/libs/data-tools.js';
 	
 	export default {
+		mixins: [rentMixin],
 		components: {
 			promoBanner,
 			houseItem
 		},
 		data() {
 			return {
-				title: 'Hello',
-				inputData: '*',
+			  properties: [],
+			  page: 1,
+			  limit: 10,
+			  noMoreData: false,
 			}
 		},
 		onLoad() {
-
+			console.log('onLoad: start.')
+			
+		},
+		mounted() {
+			this.fetchData()
 		},
 		methods: {
-			onChange(e) {
-				console.log('Good ')
-				console.log('value ', e)
-				this.inputData = e
+			loadMore() {
+			  if (!this.noMoreData) {
+			    this.fetchRentInfos();
+			  }
+			},
+			async fetchData() {
+			    console.log('Fetching data and attaching images.');
+			    await this.fetchRentInfos();
+			    await this.attachPropertiesWithTmpImage();
 			}
 		}
 	}

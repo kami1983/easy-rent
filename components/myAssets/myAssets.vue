@@ -34,13 +34,22 @@
 	import infoList from '@/components/infoList/infoList.vue';
 
 	export default {
+		props: {
+			initialTab: {
+			    type: String,
+			    default: 'rent'
+			}
+		},
 		components: {
 		    infoList
 		},
 		data() {
 			return {
-			      currentTab: 'rent'
+			    currentTab: this.initialTab
 			};
+		},
+		created() {
+			console.log('DEBUG- My assets created with initial tab:', this.currentTab)
 		},
 		methods: {
 			switchTab(tab) {

@@ -4,7 +4,7 @@
 		<login-register :user-info="userInfo"></login-register>
 		</view>
 		<view>
-		<my-assets></my-assets>
+		<my-assets :initial-tab="'search'"></my-assets>
 		</view>
 	</scroll-view>
 </template>
@@ -13,7 +13,6 @@
 	
 	import loginRegister from '@/components/loginRegister/loginRegister.vue';
 	import myAssets from '../../components/myAssets/myAssets.vue';
-	
 	
 	export default {
 		components: {
@@ -28,7 +27,11 @@
 		onReachBottom() {
 		  console.log('onReachBottom -- RUN == DEBUG 2 ')
 		},
+		onShow() {
+			console.log('InfoList on Show')
+		},
 		onLoad() {
+			console.log('onLoad on Show')
 		  const app = getApp();
 		  this.userInfo = app.globalData.userInfo;
 		  // console.log(this.userInfo)

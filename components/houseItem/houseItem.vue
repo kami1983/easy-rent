@@ -1,43 +1,41 @@
 <template>
-	<view class="card">
-	    <image class="card-image" :src="imageSrc" mode="aspectFill" />
-	    <view class="card-content">
-	      <text class="card-title">{{ title }}</text>
-	      <text class="card-details">{{ details }}</text>
-	      <text class="card-address">{{ address }}</text>
-	    </view>
-	  </view>
+    <view class="card">
+        <image class="card-image" :src="effectiveImageSrc" mode="aspectFill" />
+        <view class="card-content">
+          <text class="card-title">{{ title }}</text>
+          <text class="card-details">{{ details }}</text>
+          <text class="card-address">{{ address }}</text>
+        </view>
+    </view>
 </template>
 
 <script>
-	export default {
-		props: {
-		    imageSrc: {
-		      type: String,
-		      required: true
-		    },
-		    title: {
-		      type: String,
-		      required: true
-		    },
-		    details: {
-		      type: String,
-		      required: true
-		    },
-		    address: {
-		      type: String,
-		      required: true
-		    }
-		},
-		data() {
-			return {
-				
-			}
-		},
-		methods: {
-			
-		}
-	}
+export default {
+    props: {
+        imageSrc: {
+          type: String,
+          required: true
+        },
+        title: {
+          type: String,
+          required: true
+        },
+        details: {
+          type: String,
+          required: true
+        },
+        address: {
+          type: String,
+          required: true
+        }
+    },
+    computed: {
+        effectiveImageSrc() {
+            // Assuming 'default-placeholder.png' is located in the static directory
+            return this.imageSrc || '/static/default-placeholder.png';
+        }
+    }
+}
 </script>
 
 <style>

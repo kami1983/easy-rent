@@ -19,14 +19,15 @@ const _sfc_main = {
       required: true
     }
   },
-  data() {
-    return {};
-  },
-  methods: {}
+  computed: {
+    effectiveImageSrc() {
+      return this.imageSrc || "/static/default-placeholder.png";
+    }
+  }
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
-    a: $props.imageSrc,
+    a: $options.effectiveImageSrc,
     b: common_vendor.t($props.title),
     c: common_vendor.t($props.details),
     d: common_vendor.t($props.address)

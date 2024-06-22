@@ -46,10 +46,11 @@ async function callWithWxCloud(obj, number = 0) {
     return result.data;
   } catch (e) {
     const error = e.toString();
+    console.log("Cloud API isn't enabled", error);
     if (error.indexOf("Cloud API isn't enabled") != -1 && number < 3) {
       return new Promise((resolve) => {
         setTimeout(function() {
-          resolve(that.call(obj, number + 1));
+          resolve(that.callWithWxCloud(obj, number + 1));
         }, 300);
       });
     } else {

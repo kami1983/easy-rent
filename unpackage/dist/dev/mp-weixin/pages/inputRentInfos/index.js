@@ -81,7 +81,6 @@ const _sfc_main = {
       const formattedDay = day < 10 ? `0${day}` : `${day}`;
       const app = getApp();
       const cloudApi = await app.globalData.getCloudApi;
-      console.log("cloudApi = ", cloudApi);
       try {
         const res = await new Promise((resolve, reject) => {
           cloudApi.uploadFile({
@@ -152,9 +151,6 @@ const _sfc_main = {
       this.selectedHall = this.roomStruct.halls[val[1]];
       this.selectedBathroom = this.roomStruct.bathrooms[val[2]];
     },
-    // onRentTypeChange(event) {
-    //   this.rentForm.rent_form_rent_type = event.detail.value;
-    // },
     onRentTypeChange(newType) {
       this.rentForm.rent_form_rent_type = newType;
     },
