@@ -25,7 +25,9 @@ export default {
     return {
 		isChecked: false,
 		items: [
-		  { text: '添加出租公告', page: '/pages/inputRentInfos/index' }
+		  // { text: '店铺优惠公告', page: '/pages/inputRentInfos/index' },
+		  { text: '闲物寻物公告', page: '/pages/inputGoodInfos/index' },
+		  { text: '社区出租公告', page: '/pages/inputRentInfos/index' }
 		  // { text: '添加社区公告', page: '/otherPagePath' },
 		  // { text: '添加工单反馈', page: '/anotherPagePath' }
 		]
@@ -37,9 +39,6 @@ export default {
 		this.isChecked = event.detail.value.includes('agree');
 	},
 	viewTerms() {
-	    // 实现查看条款的逻辑，可能是导航到一个页面或打开一个模态框
-	    console.log("查看条款被点击");
-		// 弹出条款信息窗口
 		uni.showModal({
 		  title: '社区公告条款',
 		  content: '请仔细阅读以下条款概要:\n1. 尊重和礼貌\n2. 真实性和准确性\n3. 遵守法律法规\n4. 个人信息和隐私\n5. 知识产权及免责条款\n详细条款信息，请点击“详细阅读”。',
@@ -57,7 +56,6 @@ export default {
 		}); 
 	},
 	navigateTo(page) {
-	    // 导航逻辑
 	    uni.navigateTo({ url: page });
 	}
   }
@@ -86,10 +84,7 @@ export default {
   background-color: #007AFF; /* 按钮背景色 */
 }
 
-.button-text {
-  color: white; 
-  font-size: 16px; 
-}
+
 
 .button-icon {
   color: white; 
@@ -98,6 +93,11 @@ export default {
 
 .image-section image {
   width: 100%;
+}
+
+.button-text {
+  color: white; 
+  font-size: 16px; 
 }
 
 .buttons button {

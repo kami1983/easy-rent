@@ -4,7 +4,7 @@
 		<login-register :user-info="userInfo"></login-register>
 		</view>
 		<view>
-		<my-assets :initial-tab="'search'"></my-assets>
+		<my-assets :initial-tab="'rent'" :refresh-trigger="refreshCounter"></my-assets>
 		</view>
 	</scroll-view>
 </template>
@@ -21,24 +21,23 @@
 		},
 		onPullDownRefresh() {
 			console.log('onPullDownRefresh -- RUN == DEBUG 1 ')
-			// this.getGoodsList(() => uni.stopPullDownRefresh())
 		},
 		// 触底的事件
 		onReachBottom() {
-		  console.log('onReachBottom -- RUN == DEBUG 2 ')
+			console.log('onReachBottom -- RUN == DEBUG 2 ')
 		},
 		onShow() {
-			console.log('InfoList on Show')
+			console.log('On profile onShow')
+			this.refreshCounter++;
 		},
 		onLoad() {
-			console.log('onLoad on Show')
-		  const app = getApp();
-		  this.userInfo = app.globalData.userInfo;
-		  // console.log(this.userInfo)
+			const app = getApp();
+			this.userInfo = app.globalData.userInfo;
 		},
 		data() {
 			return {
-				userInfo: {}
+				userInfo: {},
+				refreshCounter: 0
 			}
 		}
 	}

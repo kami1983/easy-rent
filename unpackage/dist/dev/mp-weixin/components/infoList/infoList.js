@@ -3,6 +3,9 @@ const common_vendor = require("../../common/vendor.js");
 const libs_dataTools = require("../../libs/data-tools.js");
 const _sfc_main = {
   mixins: [libs_dataTools.rentMixin],
+  props: {
+    refreshTrigger: Number
+  },
   data() {
     return {
       lastTapTime: 0,
@@ -10,11 +13,24 @@ const _sfc_main = {
       properties: [],
       page: 1,
       limit: 10,
+      isLoading: false,
       noMoreData: false
     };
   },
   mounted() {
+    console.log("Mounted...");
     this.fetchRentInfosOnMine();
+  },
+  watch: {
+    refreshTrigger(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        console.log("HELLO trigger： ", { newVal, oldVal });
+        this.page = 1;
+        this.limit = 10;
+        this.properties = [];
+        this.fetchRentInfosOnMine();
+      }
+    }
   },
   methods: {
     handleTap(item) {
@@ -41,6 +57,7 @@ const _sfc_main = {
           });
           const index = this.properties.findIndex((item) => item.id === rentId);
           if (index !== -1) {
+            console.log("__update_diff", _update_diff);
             this.$set(this.properties, index, {
               ...this.properties[index],
               ...response.backData,
@@ -66,7 +83,7 @@ const _sfc_main = {
       console.log("confirmDeletion --- ");
       common_vendor.index.showModal({
         title: "确认删除",
-        content: `ID[${item.id}] | ${parseInt(item.rent_area)}平，${item.rent_address}`,
+        content: item.tip ? `${item.tip}` : `${parseInt(item.rent_area)}平，${item.rent_address}`,
         success: (res) => {
           if (res.confirm) {
             console.log("用户点击确定");
@@ -108,10 +125,8 @@ const _sfc_main = {
     async deleteProperty(rentId) {
       console.log("Deleting property with ID:", rentId);
       const rentList = await this.getCloudImagesListByRentId(rentId);
-      console.log("rentList 2 - ", rentList);
       if (rentList.length > 0) {
         const deletePromises = rentList.map((item) => {
-          console.log("Will delete image: ", item);
           common_vendor.index.showToast({
             title: `删除图片${item.id}`,
             icon: "success"
@@ -119,7 +134,6 @@ const _sfc_main = {
           return this.deleteImageFromCloud(item.url);
         });
         await Promise.all(deletePromises);
-        console.log("All images deleted successfully.");
       }
       const app = getApp();
       try {
@@ -153,21 +167,56 @@ const _sfc_main = {
     },
     loadMore() {
       this.fetchRentInfosOnMine();
+    },
+    statusText(status) {
+      switch (status) {
+        case 0:
+          return "审核中";
+        case 1:
+          return "上线中";
+        case 2:
+          return "驳回";
+        default:
+          return "其他";
+      }
+    },
+    statusClass(status) {
+      switch (status) {
+        case 0:
+          return "status-pending";
+        case 1:
+          return "status-active";
+        default:
+          return "status-unknown";
+      }
     }
   }
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: common_vendor.f($data.properties, (item, index, i0) => {
-      return {
-        a: common_vendor.t(item.rent_area | parseInt),
-        b: common_vendor.t(item.rent_address),
-        c: common_vendor.t(item.update_diff),
-        d: common_vendor.t(item.rent_type),
-        e: common_vendor.o(($event) => $options.refreshRent(item.id), index),
-        f: common_vendor.o(($event) => $options.handleTap(item), index),
-        g: index
-      };
+      return common_vendor.e({
+        a: item.type == 1
+      }, item.type == 1 ? {
+        b: common_vendor.t(item.rent_area | parseInt),
+        c: common_vendor.t(item.rent_address)
+      } : {}, {
+        d: item.type == 2
+      }, item.type == 2 ? {
+        e: common_vendor.t(item.rent_address == "" ? "无标题" : item.rent_address)
+      } : {}, {
+        f: common_vendor.t(item.update_diff < 0 ? 0 : item.update_diff),
+        g: common_vendor.t(item.type == 1 ? "租房" : "置物"),
+        h: common_vendor.t($options.statusText(item.status)),
+        i: common_vendor.n($options.statusClass(item.status)),
+        j: item.status === 1 || item.status === 1
+      }, item.status === 1 || item.status === 1 ? {
+        k: common_vendor.t(item.status === 1 ? "顶" : "上"),
+        l: common_vendor.o(($event) => $options.refreshRent(item.id), index)
+      } : {}, {
+        m: common_vendor.o(($event) => $options.handleTap(item), index),
+        n: index
+      });
     }),
     b: $data.properties.length === 0
   }, $data.properties.length === 0 ? {} : {}, {

@@ -11,77 +11,91 @@ export default {
 	
     methods: {
         async fetchRentInfos() {
-			return await this.fetchRentInfosWithApi('/rent-infos');
-    //         const app = getApp();
-    //         try {
-    //             const response = await app.globalData.callWithWxCloud({
-    //                 path: '/user/rent-infos',
-    //                 data: {
-    //                     page: this.page,
-    //                     limit: this.limit
-    //                 },
-    //                 method: 'GET'
-    //             });
-				// console.log('DEBUG- response:', response)
-    //             if (response.status) {
-    //                 const newProperties = response.backData.map(item => ({
-    //                     ...item,
-    //                     update_diff: 7 - this.calculateDateDifference(item.updated_at),
-    //                 }));
-					
-    //                 this.properties = [...this.properties, ...newProperties];
-    //                 if (newProperties.length < this.limit) {
-    //                     this.noMoreData = true;
-    //                 } else {
-    //                     this.page++;
-    //                 }
-    //             } else {
-    //                 uni.showToast({
-    //                     title: '获取数据失败',
-    //                     icon: 'none'
-    //                 });
-    //             }
-    //         } catch (error) {
-    //             console.error('请求错误:', error);
-    //             uni.showToast({
-    //                 title: '网络或服务器错误',
-    //                 icon: 'none'
-    //             });
-    //         }
+			return await this.fetchRentInfosListWithApi('/rent-infos', {
+				page: this.page,
+				limit: this.limit,
+				type: 1,
+				status: 1
+			});
         },
-		async fetchRentInfosOnMine(){
-			return await this.fetchRentInfosWithApi('/user/rent-infos');
+		async fetchRentDetailById(rentid) {
+			return await this.callCloudApi('/rent-detail', 'GET', {rentid});
 		},
-		async fetchRentInfosWithApi(api_path) {
+		// async fetchRentInfosOnMine(){
+		// 	return await this.fetchRentInfosListWithApi('/user/rent-infos', {
+		// 		page: this.page,
+		// 		limit: this.limit,
+		// 		type: 1
+		// 	});
+		// },
+		async fetchRentInfosOnMine() {
+		    if (this.isLoading) return;
+		    this.isLoading = true;
+		    try {
+		        const result = await this.fetchRentInfosListWithApi('/user/rent-infos', {
+		            page: this.page,
+		            limit: this.limit
+		        });
+		        // 处理 result
+		    } catch (error) {
+		        console.error('请求错误:', error);
+		    } finally {
+		        this.isLoading = false;
+		    }
+		},
+		async fetchFavoritesOnMine(){
+			return await this.fetchRentInfosListWithApi('/user/favorites/list', {
+				page: this.page,
+				limit: this.limit
+			});
+		},
+		async fetchRentInfosListWithApi(api_path, data_param={}) {
+			const app = getApp();
+			
+			try {
+			    const response = await app.globalData.callWithWxCloud({
+			        path: api_path,
+			        data: data_param,
+			        method: 'GET'
+			    });
+				console.log('DEBUG- response data:', response.backData)
+			    if (response.status) {
+					
+			        const newProperties = response.backData.map(item => ({
+			            ...item,
+			            update_diff: 7 - this.calculateDateDifference(item.updated_at),
+			        }));
+					
+			        this.properties = [...this.properties, ...newProperties];
+			        if (newProperties.length < this.limit) {
+			            this.noMoreData = true;
+			        } else {
+			            this.page++;
+			        }
+			    } else {
+			        uni.showToast({
+			            title: '获取数据失败',
+			            icon: 'none'
+			        });
+			    }
+			} catch (error) {
+			    console.error('请求错误:', error);
+			    uni.showToast({
+			        title: '网络或服务器错误',
+			        icon: 'none'
+			    });
+			}
+		},
+		async callCloudApi(api_path, method='GET', data_param={}) {
 		    const app = getApp();
+			
 		    try {
 		        const response = await app.globalData.callWithWxCloud({
 		            path: api_path,
-		            data: {
-		                page: this.page,
-		                limit: this.limit
-		            },
-		            method: 'GET'
+		            data: data_param,
+		            method
 		        });
-				console.log('DEBUG- response:', response)
-		        if (response.status) {
-		            const newProperties = response.backData.map(item => ({
-		                ...item,
-		                update_diff: 7 - this.calculateDateDifference(item.updated_at),
-		            }));
-					
-		            this.properties = [...this.properties, ...newProperties];
-		            if (newProperties.length < this.limit) {
-		                this.noMoreData = true;
-		            } else {
-		                this.page++;
-		            }
-		        } else {
-		            uni.showToast({
-		                title: '获取数据失败',
-		                icon: 'none'
-		            });
-		        }
+				return response
 		    } catch (error) {
 		        console.error('请求错误:', error);
 		        uni.showToast({
@@ -155,6 +169,43 @@ export default {
                 return [];
             }
         },
+		addFavoriteToDb(rentId, type = 1, status = 1, title = "Default Title") {
+		    const app = getApp();
+		    const data = {
+		        rentid: rentId,
+		        type: type,
+		        status: status,
+		        title: title
+		    };
+			
+			console.log('addFavoriteToDb - data:', data)
+		
+		    app.globalData.callWithWxCloud({
+		        path: '/user/favorite/add',
+		        data: data,
+		        method: 'POST'
+		    })
+		    .then(response => {
+		        if (response.status) {
+		            uni.showToast({
+		                title: '收藏成功',
+		                icon: 'success'
+		            });
+		        } else {
+		            uni.showToast({
+		                title: response.error || '已存在',
+		                icon: 'none'
+		            });
+		        }
+		    })
+		    .catch(error => {
+		        console.error('添加收藏失败:', error);
+		        uni.showToast({
+		            title: '网络或服务器错误',
+		            icon: 'none'
+		        });
+		    });
+		},
 		calculateDateDifference(updatedAt) {
 		    const now = new Date();
 		    const updatedDate = new Date(updatedAt);

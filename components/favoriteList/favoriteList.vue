@@ -8,20 +8,14 @@
                 <view class="property-item" v-for="(item, index) in properties" :key="index">
                     <view class="property-content" @click="handleTap(item)">
                         <view class="property-details">
-                            <view v-if="item.type == 1" class="property-title">{{ item.rent_area | parseInt }}平，{{ item.rent_address }}</view>
-							<view v-if="item.type == 2" class="property-title">{{ item.rent_address == '' ? '无标题' : item.rent_address }}</view>
-                            <view class="property-info">
-								权重：{{ item.update_diff < 0 ? 0 : item.update_diff }}, 公告类型：{{ item.type == 1 ? '租房' : '置物' }} 
+                            <view class="property-title">{{ item.rent_area | parseInt }}平，{{ item.rent_address }}</view>
+							<view class="property-info">
+								租赁类型：{{ item.rent_type }} 
 								<span :class="statusClass(item.status)">{{ statusText(item.status) }}</span>
 							</view>
-                        </view>
+						</view>
                         <view class="action-section">
-							<!-- <button class="action-button" @click="refreshRent(item.id)">顶</button> -->
-							 <button v-if="item.status === 1 || item.status === 1" 
-							          class="action-button" 
-							          @click.stop="refreshRent(item.id)">
-									{{ item.status === 1 ? '顶' : '上' }}
-							 </button>
+							<button class="action-button" @click="navigateTo('/pages/rentDetail/index?rentid=' + item.id)">&gt</button>
                         </view>
                     </view>
                 </view>
@@ -41,7 +35,7 @@ import rentMixin from '@/libs/data-tools.js';
 export default {
 	mixins: [rentMixin],
 	props: {
-		refreshTrigger: Number,
+		refreshTrigger: Number
 	},
     data() {
         return {
@@ -54,17 +48,16 @@ export default {
         }
     },
     mounted() {
-		console.log('Mounted...')
-		this.fetchRentInfosOnMine();
+        this.fetchFavoritesOnMine();
     },
 	watch: {
 	    refreshTrigger(newVal, oldVal) {
-	        if (newVal !== oldVal ) {
+	        if (newVal !== oldVal) {
 	            console.log('HELLO trigger： ', {newVal, oldVal})
 				this.page = 1;
 				this.limit = 10;
 				this.properties = [];
-				this.fetchRentInfosOnMine();
+				this.fetchFavoritesOnMine();
 	        }
 	    }
 	},
@@ -79,51 +72,13 @@ export default {
 		    }
 		},
 		async refreshRent(rentId) {
-		    const app = getApp();
-		    try {
-		        const response = await app.globalData.callWithWxCloud({
-		            path: '/user/refresh-rent',
-		            data: { rentid: rentId },
-		            method: 'GET'
-		        });
-				
-				console.log('DEBU /user/refresh-rent ', {rentId, response })
-		        if (response.status) {
-		            uni.showToast({
-		                title: '权重提升',
-		                icon: 'success'
-		            });
-		
-		            // Find the index of the property to update
-		            const index = this.properties.findIndex(item => item.id === rentId);
-		            if (index !== -1) {
-						console.log("__update_diff", _update_diff)
-		                // Update the property in the array
-		                this.$set(this.properties, index, {
-		                    ...this.properties[index],
-		                    ...response.backData,
-		                    update_diff: 7 - this.calculateDateDifference(response.backData.updated_at) // Assuming the backend sends the updated_at field
-		                });
-		            }
-		        } else {
-		            uni.showToast({
-		                title: '更新失败',
-		                icon: 'none'
-		            });
-		        }
-		    } catch (error) {
-		        console.error('请求错误:', error);
-		        uni.showToast({
-		            title: '网络或服务器错误',
-		            icon: 'none'
-		        });
-		    }
+		    console.log('ding ---- ')
 		},
 		confirmDeletion(item) {
 			console.log('confirmDeletion --- ')
 		    uni.showModal({
 		        title: '确认删除',
-		        content: item.tip?`${item.tip}`:`${parseInt(item.rent_area)}平，${item.rent_address}`,
+		        content: `${parseInt(item.rent_area)}平，${item.rent_address}`,
 		        success: (res) => {
 		            if (res.confirm) {
 		                console.log('用户点击确定');
@@ -134,61 +89,20 @@ export default {
 		        }
 		    });
 		},
-		async deleteImageFromCloud(fileID) {
-		    const app = getApp();
-		    const cloudApi = await app.globalData.getCloudApi;
-		
-		    try {
-		        const res = await new Promise((resolve, reject) => {
-		            cloudApi.deleteFile({
-		                fileList: [fileID], // Array of file IDs
-		                success: res => {
-							console.log(' deleteFile - res -- ', res)
-		                    if (res.fileList[0].status === 0) {
-		                        resolve(res.fileList[0]); // Resolve promise if delete succeeds
-		                    } else {
-		                        reject(`Deletion failed: ${res.fileList[0].errMsg}`);
-		                    }
-		                },
-		                fail: err => {
-		                    reject(err); // Reject promise if API call fails
-		                }
-		            });
-		        });
-		        console.log('Delete ok', res);
-		        return res; // Return the delete operation result
-		    } catch (err) {
-		        console.error('Delete failed', err);
-		        return null; // Return null in case of an error
-		    }
+		navigateTo(page) {
+		  uni.navigateTo({
+		    url: page
+		  });
 		},
-		
 		async deleteProperty(rentId) {
 			// 获取某个 rentId 对应的图片
 			
 		    console.log('Deleting property with ID:', rentId);
 			
-			const rentList = await this.getCloudImagesListByRentId(rentId)
-			
-			//
-			if(rentList.length > 0) {
-				// Delete all images associated with this rentId
-				const deletePromises = rentList.map(item => {
-					uni.showToast({
-						title: `删除图片${item.id}`,
-					    icon: 'success'
-					});
-				    return this.deleteImageFromCloud(item.url);
-				});
-					
-				// Wait for all images to be deleted
-				await Promise.all(deletePromises);
-			}
-			
 			const app = getApp();
 			try {
 			    const response = await app.globalData.callWithWxCloud({
-			        path: '/user/delete-rent',
+			        path: '/user/favorite/del',
 			        data: { rentid: rentId },
 			        method: 'GET'
 			    });
@@ -225,7 +139,6 @@ export default {
 		    switch (status) {
 		        case 0: return '审核中';
 		        case 1: return '上线中';
-				case 2: return '驳回';
 		        default: return '其他';
 		    }
 		},
@@ -277,7 +190,7 @@ export default {
     justify-content: flex-end;
 }
 .action-button {
-    background-color: #1e88e5;
+    background-color: #4CAF50;
     color: #fff;
     padding: 5px 10px;
     border-radius: 5px;
@@ -304,6 +217,7 @@ export default {
     margin-left: auto;
     margin-right: auto;
 }
+
 
 .status-pending {
 	font-size: 12px;

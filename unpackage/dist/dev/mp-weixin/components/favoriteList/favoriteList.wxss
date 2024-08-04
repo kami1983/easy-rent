@@ -1,41 +1,41 @@
 
-.scroll-view.data-v-2f62ac17 {
+.scroll-view.data-v-da5f49ca {
     width: 100%;
 }
-.property-list.data-v-2f62ac17 {
+.property-list.data-v-da5f49ca {
     display: flex;
     flex-direction: column;
 }
-.no-data.data-v-2f62ac17 {
+.no-data.data-v-da5f49ca {
     text-align: center;
     padding: 20px;
 }
-.property-item.data-v-2f62ac17 {
+.property-item.data-v-da5f49ca {
     border-bottom: 1px solid #eee;
     padding: 10px 0;
 }
-.property-content.data-v-2f62ac17 {
+.property-content.data-v-da5f49ca {
     display: flex;
     flex-direction: row;
 }
-.property-details.data-v-2f62ac17 {
+.property-details.data-v-da5f49ca {
     flex: 1;
 }
-.property-title.data-v-2f62ac17 {
+.property-title.data-v-da5f49ca {
     font-size: 16px;
     font-weight: bold;
 }
-.property-info.data-v-2f62ac17 {
+.property-info.data-v-da5f49ca {
     font-size: 14px;
     color: #666;
 }
-.action-section.data-v-2f62ac17 {
+.action-section.data-v-da5f49ca {
     display: flex;
     align-items: center;
     justify-content: flex-end;
 }
-.action-button.data-v-2f62ac17 {
-    background-color: #1e88e5;
+.action-button.data-v-da5f49ca {
+    background-color: #4CAF50;
     color: #fff;
     padding: 5px 10px;
     border-radius: 5px;
@@ -51,7 +51,7 @@
     font-size: 16px;
     margin-top: 10px;
 } */
-.load-more-button.data-v-2f62ac17 {
+.load-more-button.data-v-da5f49ca {
     width: auto;
     background-color: #007AFF;
     color: white;
@@ -62,7 +62,7 @@
     margin-left: auto;
     margin-right: auto;
 }
-.status-pending.data-v-2f62ac17 {
+.status-pending.data-v-da5f49ca {
 	font-size: 12px;
     color: white;
     background-color: orange;
@@ -70,7 +70,7 @@
     padding: 1px 6px;
     font-weight: bold;
 }
-.status-active.data-v-2f62ac17 {
+.status-active.data-v-da5f49ca {
 	font-size: 12px;
     color: white;
     background-color: green;
@@ -78,7 +78,7 @@
     padding: 1px 6px;
     font-weight: bold;
 }
-.status-unknown.data-v-2f62ac17 {
+.status-unknown.data-v-da5f49ca {
 	font-size: 12px;
     color: white;
     background-color: gray;

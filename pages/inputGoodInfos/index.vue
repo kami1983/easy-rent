@@ -5,91 +5,35 @@
 	<view class="form-item img-container">
 		<ImagePicker :initial-image-list="imageList" @update:imageList="handleImageListUpdate"/>
 	</view>
-	  
-	<view class="form-item">
-	   <text class="label">月租价格：（人民币）</text>
-	   <NumberInput @onChange="onRentFormMonthRentPriceChanged" placeholder="请输入月租价格" class-name="number-input" />
-	</view>
-    <!-- 租赁类型选择器 -->
-    <view class="form-item">
-	  <RentTypePicker
-	        :options="rentTypes"
-	        :selected="rentForm.rent_form_rent_type"
-	        @update:selected="onRentTypeChange"
-	      />
-    </view>
 	
 	<view class="form-item">
-	  <text class="label">租赁面积：（平米）</text>
-	  <NumberInput @onChange="onRentFormRentAreaChanged" placeholder="请输入租赁面积" class-name="number-input" />
+	  <text class="label">物品标题：</text>
+	  <input type="text" placeholder="一句话描述物品" v-model="rentForm.rent_form_address" />
 	</view>
 	
 	<view class="form-item">
-	  <text class="label">租赁地址：</text>
-	  <input type="text" placeholder="请输入租赁地址" v-model="rentForm.rent_form_address" />
+		<checkbox-group @change="toggleNeedPrice">
+		  <label class="checkbox-label">
+			<checkbox value="checked" :checked="needPrice.isChecked" />
+		    价码：（金额，可选）
+		  </label>
+		</checkbox-group>
+	   <NumberInput v-if="this.needPrice.isChecked" @onChange="onRentFormMonthRentPriceChanged" placeholder="请输入价格" class-name="number-input" />
 	</view>
-	
-	<!-- #ifndef MP-ALIPAY -->
-	<view class="form-item">
-		<text class="label">房屋规格：</text>
-		<HouseSpecPicker :multi-array="multiArray" @change="onSpecChange" />
-	</view>
-	<!-- #endif -->
-	
-    <!-- 付款方式选择器 -->
-    <!-- view class="form-item">
-      <picker mode="selector" :range="paymentMethods" @change="onPaymentMethodChange">
-        <view class="picker">{{ rentForm.rent_form_payment_method || '选择付款方式' }}</view>
-      </picker>
-    </view> -->
 
 	<view class="form-item">
 		<view class="label">其他描述:</view>
 		<TagsPicker :tags="tags" @toggle="toggleTag" />
 	</view>
 
-    <!-- 地图展示 -->
-    <MapPicker :longitude="mapLocation.longitude"
-                   :latitude="mapLocation.latitude"
-                   :markers="mapLocation.markers"
-                   :isLocationAuthorized="isLocationAuthorized"
-				   :canUpdateMarkers="true"
-				   :enableScroll="true"
-                   @center-map="handleMapTap"/>
-    			   
-	
-	<!-- <view class="form-item">
-	  <checkbox-group @change="toggleContactInformation">
-	    <label class="checkbox-label">
-		  <checkbox value="checked" :checked="contactInformation.isChecked" />
-	      联系方式
-	    </label>
-	  </checkbox-group>
-	  <NumberInput v-if="this.contactInformation.isChecked" type="text" placeholder="国内电话" v-model="this.contactInformation.inputData" class-name="number-input" />
-	</view> -->
 	<view class="form-item">
 	   <text class="label">联系方式：</text>
 		<NumberInput v-if="this.contactInformation.isChecked" @onChange="onContactInformationChanged" placeholder="国内电话" class-name="number-input" />
 	</view>
-	<!-- <view class="form-item">
-	  <checkbox-group @change="toggleCashDiscount">
-	    <label class="checkbox-label">
-		  <checkbox value="checked" :checked="cashDiscount.isChecked" />
-	      返现优惠（金额，可选）
-	    </label>
-	  </checkbox-group>
-	  <NumberInput v-if="this.cashDiscount.isChecked" @onChange="onCashDiscountChanged" placeholder="优惠金额(数值)" class-name="number-input" />
-	  
-	</view> -->
 
 	<view class="form-item">
-	  <checkbox-group @change="toggleAdditionalDetails">
-	    <label class="checkbox-label">
-		  <checkbox value="checked" :checked="additionalDetails.isChecked" />
-	      补充信息（可选）
-	    </label>
-	  </checkbox-group>
-	  <textarea v-if="this.additionalDetails.isChecked" v-model="this.additionalDetails.inputData" placeholder="请输入更多详细描述" />
+	  <text class="label">物品描述：</text>
+	  <textarea v-model="this.additionalDetails.inputData" placeholder="请输入更多详细描述" />
 	</view>
 	
     <button @click="submitForm" class="submit-button">提交信息</button>
@@ -104,7 +48,6 @@ import TagsPicker from '@/components/tagsPicker/tagsPicker.vue';
 import MapPicker from '@/components/mapPicker/mapPicker.vue';
 import ImagePicker from '@/components/imagePicker/imagePicker.vue';
 
-	
 export default {
 	components: {
 	    NumberInput,
@@ -124,20 +67,13 @@ export default {
 			imageList: [],
 			isLocationAuthorized: false ,
 			tags: [
-			{ name: '非中介', active: false },
-			{ name: '电梯房', active: false },
-			{ name: '南北通透', active: false },
-			{ name: '明厨明卫', active: false },
-			{ name: '不临街', active: false },
-			{ name: '精装修', active: false },
-			{ name: '带家电', active: false },
-			{ name: '高楼层', active: false },
-			{ name: '带露台', active: false },
-			{ name: '学区房', active: false },
-			{ name: '商住两用', active: false }
+				{ name: '良好可用', active: false },
+				{ name: '免费赠送', active: false },
+				{ name: '急需处理', active: false },
+				{ name: '物品全新', active: false }
 			],
 		rentForm: {
-			rent_form_rent_type: '',
+			// rent_form_rent_type: '',
 			rent_form_payment_method: '',
 			rent_form_month_rent_price: '',
 			rent_form_pictures: [],
@@ -150,7 +86,7 @@ export default {
 			['一卫', '双卫', '三卫']
 		],
 		multiIndex: [0, 0, 0],
-		cashDiscount: {
+		needPrice: {
 			isChecked: false,
 			inputData: ''
 		},
@@ -166,7 +102,7 @@ export default {
 	},
   mounted() {
     this.checkLocationAuthorization();
-	this.getUserLocation();
+	// this.getUserLocation();
   },
   methods: {
 	
@@ -231,9 +167,9 @@ export default {
 	onRentFormMonthRentPriceChanged(e){
 		this.rentForm.rent_form_month_rent_price = e
 	},
-	onRentFormRentAreaChanged(e) {
-		this.rentForm.rent_form_rent_area = e
-	},
+	// onRentFormRentAreaChanged(e) {
+	// 	this.rentForm.rent_form_rent_area = e
+	// },
 	onCashDiscountChanged(e) {
 		this.cashDiscount.inputData = e
 	},
@@ -257,9 +193,9 @@ export default {
 	    this.selectedHall = this.roomStruct.halls[val[1]];
 	    this.selectedBathroom = this.roomStruct.bathrooms[val[2]];
 	},
-	onRentTypeChange(newType) {
-	    this.rentForm.rent_form_rent_type = newType;
-	},
+	// onRentTypeChange(newType) {
+	//     this.rentForm.rent_form_rent_type = newType;
+	// },
 	onPaymentMethodChange(event) {
 	  const index = event.detail.value;
 	  this.rentForm.rent_form_payment_method = this.paymentMethods[index];
@@ -298,19 +234,19 @@ export default {
 	  // 获取月租价格
 	  const formMonthRentPrice = this.rentForm.rent_form_month_rent_price
 	  
-	  // 获取是整租还是合租
-	  const formRentType = this.rentForm.rent_form_rent_type
+	  // // 获取是整租还是合租
+	  // const formRentType = this.rentForm.rent_form_rent_type
 	  
 	  // 获取租赁面积
-	  const formRentArea = this.rentForm.rent_form_rent_area
+	  // const formRentArea = this.rentForm.rent_form_rent_area
 	  
 	  // 获取租赁地址
 	  const formRentAddress = this.rentForm.rent_form_address
 	  
 	  // 获取房屋结构
-	  const formHouseStruct = this.multiIndex.map(struct=>{
-		  return struct
-	  })
+	  // const formHouseStruct = this.multiIndex.map(struct=>{
+		 //  return struct
+	  // })
 	  
 	  // 使用 filter 方法找到 active 为 true 的标签
 	  const activeTags = this.tags.filter(tag => tag.active);
@@ -321,11 +257,8 @@ export default {
 	  // 地图的经纬度
 	  const formLocationPoint = [this.mapLocation.longitude, this.mapLocation.latitude]
 	  
-	  // 可选的联系信息
+	  // 必选的联系信息
 	  const formContractInformation = this.contactInformation.inputData
-	  
-	  // 折扣信息
-	  const formCashDiscount = this.cashDiscount.inputData
 	  
 	  // 补充信息
 	  const formAdditionalDetails = this.additionalDetails.inputData
@@ -340,38 +273,42 @@ export default {
 	  }
 	  
 	  // 数据验证
-	  if (!formMonthRentPrice || isNaN(Number(formMonthRentPrice)) || Number(formMonthRentPrice) <= 0) {
-	  	  uni.showToast({
-			  title: '请输入有效的月租价格',
-			  icon: 'none'
-	  	  });
-	  	  return;
+	  if(this.needPrice.isChecked){
+		  if (!formMonthRentPrice || isNaN(Number(formMonthRentPrice)) || Number(formMonthRentPrice) <= 0) {
+		  	  uni.showToast({
+		  			  title: '请输入有效的价码',
+		  			  icon: 'none'
+		  	  });
+		  	  return;
+		  }
 	  }
 	  
-	  // 验证租赁类型
-	  if (!formRentType) {
-	      uni.showToast({
-	          title: '请选择租赁类型',
-	          icon: 'none'
-	      });
-	      return;
-	  }
+	  // // 验证租赁类型
+	  // if (!formRentType) {
+	  //     uni.showToast({
+	  //         title: '请选择租赁类型',
+	  //         icon: 'none'
+	  //     });
+	  //     return;
+	  // }
 	
-	  if (!formRentArea || isNaN(Number(formRentArea)) || Number(formRentArea) <= 0) {
-		  uni.showToast({
-			  title: '请输入有效的租赁面积',
-			  icon: 'none'
-		  });
-		  return;
-	  }
+	  // if (!formRentArea || isNaN(Number(formRentArea)) || Number(formRentArea) <= 0) {
+		 //  uni.showToast({
+			//   title: '请输入有效的租赁面积',
+			//   icon: 'none'
+		 //  });
+		 //  return;
+	  // }
  
 	  if (!formRentAddress?.trim()) {
 	      uni.showToast({
-	          title: '租赁地址不能为空',
+	          title: '物品标题不能为空',
 	          icon: 'none'
 	      });
 	      return;
 	  }
+	  
+	  
 	  console.log('DEBUG ', {formRentAddress, formContractInformation })
 	  if(!formContractInformation?.trim()){
 		  uni.showToast({
@@ -389,19 +326,19 @@ export default {
 		  // 图片上传成功后开始提交基础数据信息
 		  const post_data = {
 		  		 month_rent_price: formMonthRentPrice,
-		  		 rent_type: formRentType,
-		  		 rent_area: formRentArea,
-		  		 rent_address: formRentAddress,
-		  		 room_structure: formHouseStruct,
-		  		 location_longitude: formLocationPoint[0],
-		  		 location_latitude: formLocationPoint[1],
+		  		 rent_type: '',
+		  		 rent_area: '',
+		  		 rent_address: '',
+		  		 room_structure: [0,0,0],
+		  		 location_longitude: 0,
+		  		 location_latitude: 0,
 		  		 contact_information: formContractInformation,
-		  		 cash_discount: formCashDiscount,
+		  		 cash_discount: 0,
 		  		 additional_details: formAdditionalDetails,
 		  		 tags: formActiveTags,
 		  		 image_urls: formCloudImageIds,
 				 status: 0,
-				 type: 1,
+				 type: 2,
 		  }
 		  
 		  console.log('Debug form infos:', post_data)
@@ -425,11 +362,6 @@ export default {
 		              duration: 2000,
 		              complete: () => {
 		                  setTimeout(() => {
-		                      // 成功后返回上一页
-		                      // uni.navigateBack({
-		                      //     delta: 1  // 返回的页面层数，1 表示返回上一层
-		                      // });
-							  // 使用 switchTab 跳转到 tabBar 页面
 							  uni.switchTab({
 							      url: '/pages/profile/index' 
 							  });
@@ -459,9 +391,9 @@ export default {
 		console.log('Debug. toggleCashDiscount --  ', this.contactInformation.isChecked)
 		this.contactInformation.isChecked = event.detail.value.includes('checked');
 	},
-	toggleCashDiscount(event) {
-		console.log('Debug. toggleCashDiscount --  ', this.cashDiscount.isChecked)
-		this.cashDiscount.isChecked = event.detail.value.includes('checked');
+	toggleNeedPrice(event) {
+		console.log('Debug. toggleNeedPrice --  ', this.needPrice.isChecked)
+		this.needPrice.isChecked = event.detail.value.includes('checked');
 	},
 	toggleAdditionalDetails(event) {
 		console.log('Debug. additionalDetails --  ', this.additionalDetails.isChecked)
@@ -470,56 +402,43 @@ export default {
 	toggleTag(index) {
 	  this.tags[index].active = !this.tags[index].active;
 	},
-	getUserLocation() {
-	  console.log('---- 请求用户的地理位置权限')
-	  // 请求用户的地理位置权限
-	  uni.authorize({
-	    scope: 'scope.userLocation',
-	    success: () => {
-	      // 权限授予后，获取当前位置
-		  console.log('---- 权限授予后，获取当前位置')
-	      uni.getLocation({
-	        type: 'wgs84',
-	        success: (res) => {
-	          this.mapLocation.latitude = res.latitude;
-	          this.mapLocation.longitude = res.longitude;
-			  console.log('DEBUG  --- 获取位置成功', res)
-			  console.log('OLD this.mapLocation = ', this.mapLocation)
-	          // 更新铆钉位置
-	   //        this.mapLocation.markers = [{
-				// id: 0,
-				// latitude: res.latitude,
-				// longitude: res.longitude,
-				// width: 20,
-				// height: 30
-	   //        }];
+	// getUserLocation() {
+	//   // 请求用户的地理位置权限
+	//   uni.authorize({
+	//     scope: 'scope.userLocation',
+	//     success: () => {
+	//       // 权限授予后，获取当前位置
+	//       uni.getLocation({
+	//         type: 'wgs84',
+	//         success: (res) => {
+	//           this.mapLocation.latitude = res.latitude;
+	//           this.mapLocation.longitude = res.longitude;
 	   
-			  console.log('res.latitude, res.longitude - ', [res.latitude, res.longitude])
-			  this.mapLocation.markers = [res.latitude, res.longitude];
-			  // // 可以选择更新视图中心点为新标记点
-			  this.mapLocation.latitude = res.latitude;
-			  this.mapLocation.longitude = res.longitude;
+	// 		  console.log('res.latitude, res.longitude - ', [res.latitude, res.longitude])
+	// 		  this.mapLocation.markers = [res.latitude, res.longitude];
+	// 		  // // 可以选择更新视图中心点为新标记点
+	// 		  this.mapLocation.latitude = res.latitude;
+	// 		  this.mapLocation.longitude = res.longitude;
 			  
-			  console.log('NEW 2 this.mapLocation = ', this.mapLocation)
-	        },
-	        fail: () => {
-				console.log('DEBUG  --- 位置获取失败')
-	          uni.showToast({
-	            title: '获取位置失败',
-	            icon: 'none'
-	          });
-	        }
-	      });
-	    },
-	    fail: () => {
-	      uni.showModal({
-	        title: '位置权限未授权',
-	        content: '请在设置中打开位置权限',
-	        showCancel: false
-	      });
-	    }
-	  });
-	},
+	//         },
+	//         fail: () => {
+	// 			console.log('DEBUG  --- 位置获取失败')
+	//           uni.showToast({
+	//             title: '获取位置失败',
+	//             icon: 'none'
+	//           });
+	//         }
+	//       });
+	//     },
+	//     fail: () => {
+	//       uni.showModal({
+	//         title: '位置权限未授权',
+	//         content: '请在设置中打开位置权限',
+	//         showCancel: false
+	//       });
+	//     }
+	//   });
+	// },
 	handleMapTap(e) {
 		this.mapLocation.latitude = e.latitude;
 		this.mapLocation.longitude = e.longitude;

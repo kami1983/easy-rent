@@ -3,23 +3,53 @@ const common_vendor = require("../common/vendor.js");
 const rentMixin = {
   methods: {
     async fetchRentInfos() {
-      return await this.fetchRentInfosWithApi("/rent-infos");
+      return await this.fetchRentInfosListWithApi("/rent-infos", {
+        page: this.page,
+        limit: this.limit,
+        type: 1,
+        status: 1
+      });
     },
+    async fetchRentDetailById(rentid) {
+      return await this.callCloudApi("/rent-detail", "GET", { rentid });
+    },
+    // async fetchRentInfosOnMine(){
+    // 	return await this.fetchRentInfosListWithApi('/user/rent-infos', {
+    // 		page: this.page,
+    // 		limit: this.limit,
+    // 		type: 1
+    // 	});
+    // },
     async fetchRentInfosOnMine() {
-      return await this.fetchRentInfosWithApi("/user/rent-infos");
+      if (this.isLoading)
+        return;
+      this.isLoading = true;
+      try {
+        const result = await this.fetchRentInfosListWithApi("/user/rent-infos", {
+          page: this.page,
+          limit: this.limit
+        });
+      } catch (error) {
+        console.error("请求错误:", error);
+      } finally {
+        this.isLoading = false;
+      }
     },
-    async fetchRentInfosWithApi(api_path) {
+    async fetchFavoritesOnMine() {
+      return await this.fetchRentInfosListWithApi("/user/favorites/list", {
+        page: this.page,
+        limit: this.limit
+      });
+    },
+    async fetchRentInfosListWithApi(api_path, data_param = {}) {
       const app = getApp();
       try {
         const response = await app.globalData.callWithWxCloud({
           path: api_path,
-          data: {
-            page: this.page,
-            limit: this.limit
-          },
+          data: data_param,
           method: "GET"
         });
-        console.log("DEBUG- response:", response);
+        console.log("DEBUG- response data:", response.backData);
         if (response.status) {
           const newProperties = response.backData.map((item) => ({
             ...item,
@@ -37,6 +67,23 @@ const rentMixin = {
             icon: "none"
           });
         }
+      } catch (error) {
+        console.error("请求错误:", error);
+        common_vendor.index.showToast({
+          title: "网络或服务器错误",
+          icon: "none"
+        });
+      }
+    },
+    async callCloudApi(api_path, method = "GET", data_param = {}) {
+      const app = getApp();
+      try {
+        const response = await app.globalData.callWithWxCloud({
+          path: api_path,
+          data: data_param,
+          method
+        });
+        return response;
       } catch (error) {
         console.error("请求错误:", error);
         common_vendor.index.showToast({
@@ -109,6 +156,39 @@ const rentMixin = {
         });
         return [];
       }
+    },
+    addFavoriteToDb(rentId, type = 1, status = 1, title = "Default Title") {
+      const app = getApp();
+      const data = {
+        rentid: rentId,
+        type,
+        status,
+        title
+      };
+      console.log("addFavoriteToDb - data:", data);
+      app.globalData.callWithWxCloud({
+        path: "/user/favorite/add",
+        data,
+        method: "POST"
+      }).then((response) => {
+        if (response.status) {
+          common_vendor.index.showToast({
+            title: "收藏成功",
+            icon: "success"
+          });
+        } else {
+          common_vendor.index.showToast({
+            title: response.error || "已存在",
+            icon: "none"
+          });
+        }
+      }).catch((error) => {
+        console.error("添加收藏失败:", error);
+        common_vendor.index.showToast({
+          title: "网络或服务器错误",
+          icon: "none"
+        });
+      });
     },
     calculateDateDifference(updatedAt) {
       const now = /* @__PURE__ */ new Date();

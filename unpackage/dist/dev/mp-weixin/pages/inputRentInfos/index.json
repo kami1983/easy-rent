@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "添加租房信息",
+  "navigationBarTitleText": "租房公告",
   "usingComponents": {
     "number-input": "../../components/numberInput/numberInput",
     "house-spec-picker": "../../components/selectPicker/selectPicker",

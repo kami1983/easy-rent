@@ -4,27 +4,35 @@
 			<view 
 				class="tab" 
 				:class="{ active: currentTab === 'rent' }" 
-				@click="switchTab('rent')">我的出租</view>
-			<view 
+				@click="switchTab('rent')">我的公告</view>
+			<view
+				class="tab" 
+				:class="{ active: currentTab === 'favorite' }" 
+				@click="switchTab('favorite')">我的收藏</view>
+			<!-- <view 
 				class="tab" 
 				:class="{ active: currentTab === 'search' }" 
 				@click="switchTab('search')">我的公告</view>
 			<view
 				class="tab" 
 				:class="{ active: currentTab === 'feedback' }" 
-				@click="switchTab('feedback')">工单反馈</view>
+				@click="switchTab('feedback')">反馈</view> -->
+				
 		</view>
 		
 		<view class="content">
 			<view v-if="currentTab === 'rent'">
-				<info-list></info-list>
+				<info-list :refresh-trigger="refreshCounter"></info-list>
 			</view>
-			<view v-if="currentTab === 'search'">
-				B
+			<view v-if="currentTab === 'favorite'">
+				<favorite-list :refresh-trigger="refreshCounter"></favorite-list>
 			</view>
-			<view v-if="currentTab === 'feedback'">
+			<!-- <view v-if="currentTab === 'search'">
 				C
 			</view>
+			<view v-if="currentTab === 'feedback'">
+				D
+			</view> -->
 		</view>
 		
 	</view>
@@ -32,20 +40,32 @@
 
 <script>
 	import infoList from '@/components/infoList/infoList.vue';
+	import favoriteList from '@/components/favoriteList/favoriteList.vue';
 
 	export default {
 		props: {
 			initialTab: {
 			    type: String,
 			    default: 'rent'
-			}
+			},
+			refreshTrigger: Number
+		},
+		watch: {
+		    refreshTrigger(newVal, oldVal) {
+		        if (newVal !== oldVal) {
+					console.log('On my assets refreshTrigger: ', {newVal, oldVal})
+		            this.refreshCounter = newVal;
+		        }
+		    }
 		},
 		components: {
-		    infoList
+		    infoList,
+			favoriteList
 		},
 		data() {
 			return {
-			    currentTab: this.initialTab
+			    currentTab: this.initialTab,
+				refreshCounter: 0 
 			};
 		},
 		created() {

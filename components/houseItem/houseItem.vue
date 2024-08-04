@@ -1,10 +1,12 @@
 <template>
     <view class="card">
-        <image class="card-image" :src="effectiveImageSrc" mode="aspectFill" />
+        <image class="card-image" :src="effectiveImageSrc" mode="aspectFill" @click="navigateTo('/pages/rentDetail/index?rentid=' + rentid)" />
         <view class="card-content">
           <text class="card-title">{{ title }}</text>
-          <text class="card-details">{{ details }}</text>
-          <text class="card-address">{{ address }}</text>
+          <text class="card-details">{{ details }}
+            <text v-if="price" class="price">{{ price }}¥/月</text>  <!-- Apply specific styles to the price -->
+          </text>
+          <text class="card-address">{{ tags }}</text>
         </view>
     </view>
 </template>
@@ -24,21 +26,38 @@ export default {
           type: String,
           required: true
         },
-        address: {
+        tags: {
           type: String,
           required: true
-        }
+        },
+		price: {
+          type: String,
+          required: false
+        },
+		rentid: {  // 新增 prop
+		  type: [String, Number],  // 可以是字符串或数字
+		  required: true
+		}
     },
     computed: {
         effectiveImageSrc() {
             // Assuming 'default-placeholder.png' is located in the static directory
             return this.imageSrc || '/static/default-placeholder.png';
         }
-    }
+    },
+	methods: {
+		navigateTo(page) {
+			if(this.rentid){
+				uni.navigateTo({
+				  url: page
+				});
+			}
+		}
+	}
 }
 </script>
 
-<style>
+<style scoped>
 .card {
   border-radius: 10px;
   overflow: hidden;
@@ -67,5 +86,10 @@ export default {
 .card-details, .card-address {
   font-size: 14px;
   color: #666;
+}
+
+.price { /* New style for price */
+  font-weight: bold;
+  color: red;
 }
 </style>

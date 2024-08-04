@@ -15,16 +15,17 @@ const _sfc_main = {
     console.log("onReachBottom -- RUN == DEBUG 2 ");
   },
   onShow() {
-    console.log("InfoList on Show");
+    console.log("On profile onShow");
+    this.refreshCounter++;
   },
   onLoad() {
-    console.log("onLoad on Show");
     const app = getApp();
     this.userInfo = app.globalData.userInfo;
   },
   data() {
     return {
-      userInfo: {}
+      userInfo: {},
+      refreshCounter: 0
     };
   }
 };
@@ -39,7 +40,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       ["user-info"]: $data.userInfo
     }),
     b: common_vendor.p({
-      ["initial-tab"]: "search"
+      ["initial-tab"]: "rent",
+      ["refresh-trigger"]: $data.refreshCounter
     })
   };
 }

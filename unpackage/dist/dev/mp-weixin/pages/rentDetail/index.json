@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "租房信息",
+  "usingComponents": {
+    "tags-picker": "../../components/tagsPicker/tagsPicker",
+    "map-picker": "../../components/mapPicker/mapPicker"
+  }
+}

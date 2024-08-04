@@ -5,7 +5,9 @@
     "pages/profile/index",
     "pages/operLinks/index",
     "pages/fullTerms/index",
-    "pages/inputRentInfos/index"
+    "pages/inputRentInfos/index",
+    "pages/inputGoodInfos/index",
+    "pages/rentDetail/index"
   ],
   "window": {
     "navigationBarTextStyle": "black",

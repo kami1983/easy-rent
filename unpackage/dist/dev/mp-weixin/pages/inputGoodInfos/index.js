@@ -25,20 +25,13 @@ const _sfc_main = {
       imageList: [],
       isLocationAuthorized: false,
       tags: [
-        { name: "非中介", active: false },
-        { name: "电梯房", active: false },
-        { name: "南北通透", active: false },
-        { name: "明厨明卫", active: false },
-        { name: "不临街", active: false },
-        { name: "精装修", active: false },
-        { name: "带家电", active: false },
-        { name: "高楼层", active: false },
-        { name: "带露台", active: false },
-        { name: "学区房", active: false },
-        { name: "商住两用", active: false }
+        { name: "良好可用", active: false },
+        { name: "免费赠送", active: false },
+        { name: "急需处理", active: false },
+        { name: "物品全新", active: false }
       ],
       rentForm: {
-        rent_form_rent_type: "",
+        // rent_form_rent_type: '',
         rent_form_payment_method: "",
         rent_form_month_rent_price: "",
         rent_form_pictures: []
@@ -51,7 +44,7 @@ const _sfc_main = {
         ["一卫", "双卫", "三卫"]
       ],
       multiIndex: [0, 0, 0],
-      cashDiscount: {
+      needPrice: {
         isChecked: false,
         inputData: ""
       },
@@ -67,7 +60,6 @@ const _sfc_main = {
   },
   mounted() {
     this.checkLocationAuthorization();
-    this.getUserLocation();
   },
   methods: {
     async updateImageToCloud(tmpFile) {
@@ -125,9 +117,9 @@ const _sfc_main = {
     onRentFormMonthRentPriceChanged(e) {
       this.rentForm.rent_form_month_rent_price = e;
     },
-    onRentFormRentAreaChanged(e) {
-      this.rentForm.rent_form_rent_area = e;
-    },
+    // onRentFormRentAreaChanged(e) {
+    // 	this.rentForm.rent_form_rent_area = e
+    // },
     onCashDiscountChanged(e) {
       this.cashDiscount.inputData = e;
     },
@@ -151,9 +143,9 @@ const _sfc_main = {
       this.selectedHall = this.roomStruct.halls[val[1]];
       this.selectedBathroom = this.roomStruct.bathrooms[val[2]];
     },
-    onRentTypeChange(newType) {
-      this.rentForm.rent_form_rent_type = newType;
-    },
+    // onRentTypeChange(newType) {
+    //     this.rentForm.rent_form_rent_type = newType;
+    // },
     onPaymentMethodChange(event) {
       const index = event.detail.value;
       this.rentForm.rent_form_payment_method = this.paymentMethods[index];
@@ -190,17 +182,11 @@ const _sfc_main = {
     },
     async submitForm() {
       const formMonthRentPrice = this.rentForm.rent_form_month_rent_price;
-      const formRentType = this.rentForm.rent_form_rent_type;
-      const formRentArea = this.rentForm.rent_form_rent_area;
       const formRentAddress = this.rentForm.rent_form_address;
-      const formHouseStruct = this.multiIndex.map((struct) => {
-        return struct;
-      });
       const activeTags = this.tags.filter((tag) => tag.active);
       const formActiveTags = activeTags.map((tag) => tag.name);
-      const formLocationPoint = [this.mapLocation.longitude, this.mapLocation.latitude];
+      [this.mapLocation.longitude, this.mapLocation.latitude];
       const formContractInformation = this.contactInformation.inputData;
-      const formCashDiscount = this.cashDiscount.inputData;
       const formAdditionalDetails = this.additionalDetails.inputData;
       if (!this.imageList.length) {
         common_vendor.index.showToast({
@@ -209,30 +195,18 @@ const _sfc_main = {
         });
         return;
       }
-      if (!formMonthRentPrice || isNaN(Number(formMonthRentPrice)) || Number(formMonthRentPrice) <= 0) {
-        common_vendor.index.showToast({
-          title: "请输入有效的月租价格",
-          icon: "none"
-        });
-        return;
-      }
-      if (!formRentType) {
-        common_vendor.index.showToast({
-          title: "请选择租赁类型",
-          icon: "none"
-        });
-        return;
-      }
-      if (!formRentArea || isNaN(Number(formRentArea)) || Number(formRentArea) <= 0) {
-        common_vendor.index.showToast({
-          title: "请输入有效的租赁面积",
-          icon: "none"
-        });
-        return;
+      if (this.needPrice.isChecked) {
+        if (!formMonthRentPrice || isNaN(Number(formMonthRentPrice)) || Number(formMonthRentPrice) <= 0) {
+          common_vendor.index.showToast({
+            title: "请输入有效的价码",
+            icon: "none"
+          });
+          return;
+        }
       }
       if (!(formRentAddress == null ? void 0 : formRentAddress.trim())) {
         common_vendor.index.showToast({
-          title: "租赁地址不能为空",
+          title: "物品标题不能为空",
           icon: "none"
         });
         return;
@@ -250,19 +224,19 @@ const _sfc_main = {
       if (formCloudImageIds.length > 0) {
         const post_data = {
           month_rent_price: formMonthRentPrice,
-          rent_type: formRentType,
-          rent_area: formRentArea,
-          rent_address: formRentAddress,
-          room_structure: formHouseStruct,
-          location_longitude: formLocationPoint[0],
-          location_latitude: formLocationPoint[1],
+          rent_type: "",
+          rent_area: "",
+          rent_address: "",
+          room_structure: [0, 0, 0],
+          location_longitude: 0,
+          location_latitude: 0,
           contact_information: formContractInformation,
-          cash_discount: formCashDiscount,
+          cash_discount: 0,
           additional_details: formAdditionalDetails,
           tags: formActiveTags,
           image_urls: formCloudImageIds,
           status: 0,
-          type: 1
+          type: 2
         };
         console.log("Debug form infos:", post_data);
         const app = getApp();
@@ -313,9 +287,9 @@ const _sfc_main = {
       console.log("Debug. toggleCashDiscount --  ", this.contactInformation.isChecked);
       this.contactInformation.isChecked = event.detail.value.includes("checked");
     },
-    toggleCashDiscount(event) {
-      console.log("Debug. toggleCashDiscount --  ", this.cashDiscount.isChecked);
-      this.cashDiscount.isChecked = event.detail.value.includes("checked");
+    toggleNeedPrice(event) {
+      console.log("Debug. toggleNeedPrice --  ", this.needPrice.isChecked);
+      this.needPrice.isChecked = event.detail.value.includes("checked");
     },
     toggleAdditionalDetails(event) {
       console.log("Debug. additionalDetails --  ", this.additionalDetails.isChecked);
@@ -324,43 +298,41 @@ const _sfc_main = {
     toggleTag(index) {
       this.tags[index].active = !this.tags[index].active;
     },
-    getUserLocation() {
-      console.log("---- 请求用户的地理位置权限");
-      common_vendor.index.authorize({
-        scope: "scope.userLocation",
-        success: () => {
-          console.log("---- 权限授予后，获取当前位置");
-          common_vendor.index.getLocation({
-            type: "wgs84",
-            success: (res) => {
-              this.mapLocation.latitude = res.latitude;
-              this.mapLocation.longitude = res.longitude;
-              console.log("DEBUG  --- 获取位置成功", res);
-              console.log("OLD this.mapLocation = ", this.mapLocation);
-              console.log("res.latitude, res.longitude - ", [res.latitude, res.longitude]);
-              this.mapLocation.markers = [res.latitude, res.longitude];
-              this.mapLocation.latitude = res.latitude;
-              this.mapLocation.longitude = res.longitude;
-              console.log("NEW 2 this.mapLocation = ", this.mapLocation);
-            },
-            fail: () => {
-              console.log("DEBUG  --- 位置获取失败");
-              common_vendor.index.showToast({
-                title: "获取位置失败",
-                icon: "none"
-              });
-            }
-          });
-        },
-        fail: () => {
-          common_vendor.index.showModal({
-            title: "位置权限未授权",
-            content: "请在设置中打开位置权限",
-            showCancel: false
-          });
-        }
-      });
-    },
+    // getUserLocation() {
+    //   // 请求用户的地理位置权限
+    //   uni.authorize({
+    //     scope: 'scope.userLocation',
+    //     success: () => {
+    //       // 权限授予后，获取当前位置
+    //       uni.getLocation({
+    //         type: 'wgs84',
+    //         success: (res) => {
+    //           this.mapLocation.latitude = res.latitude;
+    //           this.mapLocation.longitude = res.longitude;
+    // 		  console.log('res.latitude, res.longitude - ', [res.latitude, res.longitude])
+    // 		  this.mapLocation.markers = [res.latitude, res.longitude];
+    // 		  // // 可以选择更新视图中心点为新标记点
+    // 		  this.mapLocation.latitude = res.latitude;
+    // 		  this.mapLocation.longitude = res.longitude;
+    //         },
+    //         fail: () => {
+    // 			console.log('DEBUG  --- 位置获取失败')
+    //           uni.showToast({
+    //             title: '获取位置失败',
+    //             icon: 'none'
+    //           });
+    //         }
+    //       });
+    //     },
+    //     fail: () => {
+    //       uni.showModal({
+    //         title: '位置权限未授权',
+    //         content: '请在设置中打开位置权限',
+    //         showCancel: false
+    //       });
+    //     }
+    //   });
+    // },
     handleMapTap(e) {
       this.mapLocation.latitude = e.latitude;
       this.mapLocation.longitude = e.longitude;
@@ -392,11 +364,8 @@ const _sfc_main = {
 if (!Array) {
   const _component_ImagePicker = common_vendor.resolveComponent("ImagePicker");
   const _component_NumberInput = common_vendor.resolveComponent("NumberInput");
-  const _component_RentTypePicker = common_vendor.resolveComponent("RentTypePicker");
-  const _component_HouseSpecPicker = common_vendor.resolveComponent("HouseSpecPicker");
   const _component_TagsPicker = common_vendor.resolveComponent("TagsPicker");
-  const _component_MapPicker = common_vendor.resolveComponent("MapPicker");
-  (_component_ImagePicker + _component_NumberInput + _component_RentTypePicker + _component_HouseSpecPicker + _component_TagsPicker + _component_MapPicker)();
+  (_component_ImagePicker + _component_NumberInput + _component_TagsPicker)();
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
@@ -404,57 +373,34 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     b: common_vendor.p({
       ["initial-image-list"]: $data.imageList
     }),
-    c: common_vendor.o($options.onRentFormMonthRentPriceChanged),
-    d: common_vendor.p({
-      placeholder: "请输入月租价格",
+    c: $data.rentForm.rent_form_address,
+    d: common_vendor.o(($event) => $data.rentForm.rent_form_address = $event.detail.value),
+    e: $data.needPrice.isChecked,
+    f: common_vendor.o((...args) => $options.toggleNeedPrice && $options.toggleNeedPrice(...args)),
+    g: this.needPrice.isChecked
+  }, this.needPrice.isChecked ? {
+    h: common_vendor.o($options.onRentFormMonthRentPriceChanged),
+    i: common_vendor.p({
+      placeholder: "请输入价格",
       ["class-name"]: "number-input"
-    }),
-    e: common_vendor.o($options.onRentTypeChange),
-    f: common_vendor.p({
-      options: $data.rentTypes,
-      selected: $data.rentForm.rent_form_rent_type
-    }),
-    g: common_vendor.o($options.onRentFormRentAreaChanged),
-    h: common_vendor.p({
-      placeholder: "请输入租赁面积",
-      ["class-name"]: "number-input"
-    }),
-    i: $data.rentForm.rent_form_address,
-    j: common_vendor.o(($event) => $data.rentForm.rent_form_address = $event.detail.value),
-    k: common_vendor.o($options.onSpecChange),
-    l: common_vendor.p({
-      ["multi-array"]: $data.multiArray
-    }),
-    m: common_vendor.o($options.toggleTag),
-    n: common_vendor.p({
+    })
+  } : {}, {
+    j: common_vendor.o($options.toggleTag),
+    k: common_vendor.p({
       tags: $data.tags
     }),
-    o: common_vendor.o($options.handleMapTap),
-    p: common_vendor.p({
-      longitude: $data.mapLocation.longitude,
-      latitude: $data.mapLocation.latitude,
-      markers: $data.mapLocation.markers,
-      isLocationAuthorized: $data.isLocationAuthorized,
-      canUpdateMarkers: true,
-      enableScroll: true
-    }),
-    q: this.contactInformation.isChecked
+    l: this.contactInformation.isChecked
   }, this.contactInformation.isChecked ? {
-    r: common_vendor.o($options.onContactInformationChanged),
-    s: common_vendor.p({
+    m: common_vendor.o($options.onContactInformationChanged),
+    n: common_vendor.p({
       placeholder: "国内电话",
       ["class-name"]: "number-input"
     })
   } : {}, {
-    t: $data.additionalDetails.isChecked,
-    v: common_vendor.o((...args) => $options.toggleAdditionalDetails && $options.toggleAdditionalDetails(...args)),
-    w: this.additionalDetails.isChecked
-  }, this.additionalDetails.isChecked ? {
-    x: this.additionalDetails.inputData,
-    y: common_vendor.o(($event) => this.additionalDetails.inputData = $event.detail.value)
-  } : {}, {
-    z: common_vendor.o((...args) => $options.submitForm && $options.submitForm(...args))
+    o: this.additionalDetails.inputData,
+    p: common_vendor.o(($event) => this.additionalDetails.inputData = $event.detail.value),
+    q: common_vendor.o((...args) => $options.submitForm && $options.submitForm(...args))
   });
 }
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-097448e0"], ["__file", "/Users/kami-m1/work-files/coding/git-files/kami-self/contact-us/easy-rent/pages/inputRentInfos/index.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-0458555b"], ["__file", "/Users/kami-m1/work-files/coding/git-files/kami-self/contact-us/easy-rent/pages/inputGoodInfos/index.vue"]]);
 wx.createPage(MiniProgramPage);

@@ -4,9 +4,11 @@
         :longitude="longitude"
         :latitude="latitude"
         :scale="scale"
-        show-location="true"
+        :show-location=true
+		:show-compass=true
+		:enable-scroll="enableScroll"
         @tap="updateMarker"
-        :markers="markers">
+        :markers="localMarkers">
     </map>
     <button v-if="!isLocationAuthorized" class="map-center-button" @tap="requestLocationPermission">
       点击授权位置
@@ -29,31 +31,77 @@ export default {
       type: Number,
       default: 14
     },
+	markers: { // Accept markers as a prop
+	  type: Array,
+	  default: () => []
+	},
     isLocationAuthorized: {
       type: Boolean,
       default: false
-    }
+    },
+	canUpdateMarkers: {  // New prop to control marker updates
+	  type: Boolean,
+	  default: true
+	},
+	enableScroll: { // New prop for enabling or disabling map scroll
+	  type: Boolean,
+	  default: true
+	}
+  },
+  mounted() {
+	const newMarker = {
+	  id: 0,
+	  latitude: this.markers[0],
+	  longitude: this.markers[1],
+	  width: 20,
+	  height: 30
+	};
+	console.log('newMarker A -- ', newMarker);
+	this.updateLocalMarkers(newMarker); // Initialize localMarkers on component mount
   },
   data() {
     return {
-      markers: [] // Now markers are managed internally
+       localMarkers: [] // Now markers are managed internally
     };
+  },
+  watch: {
+    markers: {
+      handler(markersDataArr) {
+		  const newMarker = {
+		    id: 0,
+		    latitude: markersDataArr[0],
+		    longitude: markersDataArr[1],
+		    width: 20,
+		    height: 30
+		  };
+		  console.log('newMarker B -- ', newMarker);
+        this.updateLocalMarkers(newMarker); // Update local markers when prop changes
+      },
+      deep: true // This ensures even nested data changes are detected
+    }
   },
   methods: {
     updateMarker(event) {
-      const newMarker = {
-        id: 0,
-        latitude: event.detail.latitude,
-        longitude: event.detail.longitude,
-        width: 20,
-        height: 30
-      };
-      this.markers = [newMarker]; // Update the internal markers array
-      this.centerMapOnMarker(newMarker.latitude, newMarker.longitude);
+		console.log('Update marker : ', this.canUpdateMarkers)
+		if (this.canUpdateMarkers) {
+			console.log('Will update markers.')
+			const newMarker = {
+			  id: 0,
+			  latitude: event.detail.latitude,
+			  longitude: event.detail.longitude,
+			  width: 20,
+			  height: 30
+			};
+			this.localMarkers = [newMarker]; // Update the internal markers array
+			this.centerMapOnMarker(newMarker.latitude, newMarker.longitude);
+		}
     },
     centerMapOnMarker(latitude, longitude) {
       this.$emit('center-map', {latitude, longitude});
     },
+	updateLocalMarkers(markers) {
+	  this.localMarkers = [markers]; // Update local markers whenever the prop changes
+	},
     requestLocationPermission() {
       uni.authorize({
         scope: 'scope.userLocation',

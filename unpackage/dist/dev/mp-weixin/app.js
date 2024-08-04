@@ -8,6 +8,8 @@ if (!Math) {
   "./pages/operLinks/index.js";
   "./pages/fullTerms/index.js";
   "./pages/inputRentInfos/index.js";
+  "./pages/inputGoodInfos/index.js";
+  "./pages/rentDetail/index.js";
 }
 let cloudApi = null;
 async function getCloudApi() {

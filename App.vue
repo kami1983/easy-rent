@@ -78,17 +78,6 @@
 			console.log('App Launch', this.globalData)
 			
 			if(wx.cloud) {
-				
-				// 云服务初始化
-				// if (!wx.cloud) {
-				//   console.error('请使用 2.2.3 或以上的基础库以使用云能力');
-				// } else {
-				//   console.log('Call wx.cloud.init')
-				//   wx.cloud.init({
-				//     traceUser: true,
-				//     env: 'prod-4g3usz1465b5625e'  // 指定云环境ID
-				//   });
-				// }
 					
 				that.globalData.isWxEnv = true;
 				wx.getUserInfo({

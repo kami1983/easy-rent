@@ -33,7 +33,19 @@
 		{
 		  "path": "pages/inputRentInfos/index",
 		  "style": {
-			"navigationBarTitleText": "添加租房信息"
+			"navigationBarTitleText": "租房公告"
+		  }
+		},
+		{
+		  "path": "pages/inputGoodInfos/index",
+		  "style": {
+			"navigationBarTitleText": "闲物置物公告"
+		  }
+		},
+		{
+		  "path": "pages/rentDetail/index",
+		  "style": {
+			"navigationBarTitleText": "租房信息"
 		  }
 		} 
 	],
@@ -43,6 +55,7 @@
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
+	"lazyCodeLoading": "requiredComponents",
 	"uniIdRouter": {},
 	"tabBar": {
 	  "color": "#8e8e93",

@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "info-list": "../infoList/infoList"
+    "info-list": "../infoList/infoList",
+    "favorite-list": "../favoriteList/favoriteList"
   }
 }
