@@ -64,7 +64,9 @@ const _sfc_main = {
   globalData: {
     isWxEnv: false,
     userInfo: {
-      nickName: "..",
+      id: 0,
+      open_id: "",
+      nickName: "无名氏",
       avatarUrl: "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
     },
     getCloudApi: getCloudApi(),
@@ -79,14 +81,13 @@ const _sfc_main = {
       common_vendor.wx$1.getUserInfo({
         success: function(res) {
           const userInfo = res.userInfo;
-          console.log({ userInfo });
-          that.globalData.userInfo = userInfo;
           callWithWxCloud({
             path: "/registerUser",
             method: "POST",
             data: userInfo
           }).then((res2) => {
-            console.log("Debug res", res2);
+            console.log("============ Debug res", res2);
+            that.globalData.userInfo = res2.backData;
           });
         },
         fail: function(err) {

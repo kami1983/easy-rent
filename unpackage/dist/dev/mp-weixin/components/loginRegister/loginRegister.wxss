@@ -6,9 +6,32 @@
   padding: 20px;
   border-radius: 10px;
 }
+
+/* .icon-section {
+  flex: 0 0 auto;
+  margin-right: 10px;
+  border: 0px;
+} */
+
+/* .icon-section {
+  margin-right: 10px;
+  border: none; 
+  background-color: transparent; 
+  padding: 0; 
+  box-shadow: none; 
+} */
 .icon-section {
   flex: 0 0 auto;
   margin-right: 10px;
+  border: none; 
+  background: none; 
+  padding: 0; 
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+}
+.icon-section::after{
+  border: none;
 }
 .icon-image {
   width: 60px;
@@ -18,23 +41,23 @@
 .text-section {
   flex: 1;
 }
-
-/* .main-text {
-  font-size: 20px;
-  font-weight: bold;
-  color: #000;
+.nickname-button {
+	background-color: #f2f2f2;
+	display: inline-block;
+	border: none;
 }
-
-.main-text:active {
-  color: #555; 
-  box-shadow: 0 0 8px rgba(0,0,0,0.6); 
- }*/
+.nickname-button::after{
+  border: none;
+}
+.nickname-button:active {
+    background-color: #e8e8e8;  
+    color: #333;               
+    border-color: #aaa;
+}
 .main-text {
   font-size: 14px;
   font-weight: bold;
   color: #000;
-  background-color: #f2f2f2; 
-  padding: 10px 20px;
   border-radius: 5px;
   border: 2px solid transparent;
   transition: all 0.3s ease; 

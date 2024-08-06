@@ -21,13 +21,7 @@
 	 */
 	async function callWithWxCloud(obj, number=0){
 	  const that = this
-	  // if(that.cloud == null){
-	  //   that.cloud = new wx.cloud.Cloud({
-	  //     resourceAppid: 'wxf6e7dbe6198c7f06', // 微信云托管环境所属账号，服务商appid、公众号或小程序appid
-	  //     resourceEnv: 'prod-4g3usz1465b5625e', // 微信云托管的环境ID
-	  //   })
-	  //   await that.cloud.init() // init过程是异步的，需要等待init完成才可以发起调用
-	  // }
+	  
 	  const cloudApi = await getCloudApi()
 	  console.log('cloudApi - DEBUG ', cloudApi)
 	  try{
@@ -65,7 +59,9 @@
 		globalData: {  
 			isWxEnv: false,
 			userInfo: {
-				nickName: '..',
+				id: 0,
+				open_id: '',
+				nickName: '无名氏',
 				avatarUrl: 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'
 			},
 			getCloudApi: getCloudApi(),
@@ -83,17 +79,15 @@
 				wx.getUserInfo({
 				  success: function (res) {
 				    const userInfo = res.userInfo;
-
-				    // 使用头像和昵称
-					console.log({userInfo})
-					that.globalData.userInfo = userInfo
-					
+					// console.log({userInfo})
+					// that.globalData.userInfo = userInfo
 					callWithWxCloud({
 						path: '/registerUser',
 						method: 'POST',
 						data: userInfo
 					}).then(res => {
-						console.log('Debug res', res)
+						console.log('============ Debug res', res)
+						that.globalData.userInfo = res.backData
 					});
 					
 				  },

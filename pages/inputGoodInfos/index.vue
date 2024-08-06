@@ -127,6 +127,7 @@ export default {
 	
 	  try {
 	    const res = await new Promise((resolve, reject) => {
+		  // Doc： https://developers.weixin.qq.com/minigame/dev/wxcloud/reference-sdk-api/storage/uploadFile/web.uploadFile.html
 	      cloudApi.uploadFile({
 	        cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`, // Storage path in the cloud
 	        filePath: tmpFile, // Local file path obtained from file selection or chat interfaces
@@ -328,7 +329,7 @@ export default {
 		  		 month_rent_price: formMonthRentPrice,
 		  		 rent_type: '',
 		  		 rent_area: '',
-		  		 rent_address: '',
+		  		 rent_address: formRentAddress,
 		  		 room_structure: [0,0,0],
 		  		 location_longitude: 0,
 		  		 location_latitude: 0,

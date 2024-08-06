@@ -23,9 +23,14 @@
 		  	title=""
 		  	details=""
 		  	address="" />
+			
 		</view>
-		<button  v-if="!noMoreData" @click="loadMore" class="button load-more-button">加载更多</button>
-		<button  v-if="noMoreData" @click="navigateTo('/pages/operLinks/index')" class="button add-button">添加</button>
+		<button v-if="!noMoreData" @click="loadMore" class="button load-more-button">加载更多</button>
+		<button v-if="noMoreData" @click="navigateTo('/pages/operLinks/index')" class="button add-button">添加</button>
+		<!-- <button @click="showUserInfos()" class="button add-button">Show User</button>
+		<textarea v-model="this.debugInfos" placeholder="请输入更多详细描述" ></textarea>
+		<button open-type="chooseAvatar" @chooseavatar="onChooseAvatar" class="button add-button">获取用户信息</button> -->
+		
 	</scroll-view>
 	
 </template>
@@ -48,6 +53,7 @@
 			  page: 1,
 			  limit: 10,
 			  noMoreData: true,
+			  debugInfos: ''
 			}
 		},
 		onLoad() {
@@ -56,6 +62,19 @@
 		},
 		mounted() {
 			this.fetchData()
+		},
+		onShareAppMessage(){
+
+			return {
+			    title: '优势信息通 - 免费社区服务消息',
+			    path: '/page/index?share_id=123&share_type=1'  // 假设你要分享的页面路径
+			};
+		},
+		onShareTimeline() {
+			return {
+			    title: '优势信息通 - 免费社区服务消息',
+			    path: '/page/index?share_id=123&share_type=1'  // 假设你要分享的页面路径
+			};
 		},
 		methods: {
 			loadMore() {
@@ -72,7 +91,42 @@
 			  uni.navigateTo({
 			    url: page
 			  });
-			}
+			},
+			// onChooseAvatar(event) {
+			// 	// this.debugInfos='Hello'
+			// 	// console.log('event = ', event)
+			// 	const avatarUrl = event.detail.avatarUrl;
+			// 	console.log('avatarUrl = ', avatarUrl)
+			// },
+			// showUserInfos(){
+			// 	if(wx.cloud) {
+			// 		uni.showToast({
+			// 		    title: 'wx.cloud is true',
+			// 		    icon: 'none'
+			// 		});
+								
+			// 	 wx.getUserProfile({
+			// 	      desc: '用于完善会员资料', // 声明获取用户个人信息后的用途
+			// 	      success: (res) => {
+			// 	        console.log(res.userInfo);
+			// 	        // 此处可以获取到用户信息并处理，如存储、展示等
+			// 			this.debugInfos=`${res.userInfo.avatarUrl}#${res.userInfo.nickName} | Greet`
+			// 	      },
+			// 	      fail: (err) => {
+			// 	        console.error('获取用户信息失败', err);
+			// 	      }
+			// 	    });
+					
+			// 		wx.getSetting({
+			// 		  success: (res) => {
+			// 		    console.log('res = ', res.authSetting);
+			// 		  },
+			// 		  fail: (err) => {
+			// 		    console.error('获取设置失败', err);
+			// 		  }
+			// 		});
+			// 	}
+			// }
 		}
 	}
 </script>

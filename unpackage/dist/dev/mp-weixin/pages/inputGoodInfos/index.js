@@ -226,7 +226,7 @@ const _sfc_main = {
           month_rent_price: formMonthRentPrice,
           rent_type: "",
           rent_area: "",
-          rent_address: "",
+          rent_address: formRentAddress,
           room_structure: [0, 0, 0],
           location_longitude: 0,
           location_latitude: 0,
