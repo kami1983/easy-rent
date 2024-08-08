@@ -1,30 +1,38 @@
 
 .card.data-v-5f916c82 {
-  border-radius: 10px;
-  overflow: hidden;
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px;
 }
 .card-image.data-v-5f916c82 {
-  width: 100%;
-  height: 200px;
+    width: 100%;
+    height: 200px;
 }
 .card-content.data-v-5f916c82 {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
 }
 .card-title.data-v-5f916c82 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
 }
 .card-details.data-v-5f916c82, .card-address.data-v-5f916c82 {
-  font-size: 14px;
-  color: #666;
+    font-size: 14px;
+    color: #666;
 }
-.price.data-v-5f916c82 { /* New style for price */
-  font-weight: bold;
-  color: red;
+.price.data-v-5f916c82 { 
+    font-weight: bold;
+    color: red;
+}
+.show-icon.data-v-5f916c82 {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px; 
+	border-radius: 3px;
 }

@@ -6,7 +6,7 @@ const rentMixin = {
       return await this.fetchRentInfosListWithApi("/rent-infos", {
         page: this.page,
         limit: this.limit,
-        type: 1,
+        type: 0,
         status: 1
       });
     },
@@ -155,6 +155,43 @@ const rentMixin = {
           icon: "none"
         });
         return [];
+      }
+    },
+    async updateImageToCloud(tmpFile, subDir = "") {
+      const parts = tmpFile.split("/");
+      const filename = parts[parts.length - 1];
+      const now = /* @__PURE__ */ new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+      const formattedDay = day < 10 ? `0${day}` : `${day}`;
+      const app = getApp();
+      const cloudApi = await app.globalData.getCloudApi;
+      try {
+        const res = await new Promise((resolve, reject) => {
+          cloudApi.uploadFile({
+            cloudPath: `mini/easy-rent/${subDir}${year}-${formattedMonth}-${formattedDay}/${filename}`,
+            // Storage path in the cloud
+            filePath: tmpFile,
+            // Local file path obtained from file selection or chat interfaces
+            config: {
+              env: "prod-4g3usz1465b5625e"
+              // Cloud environment ID
+            },
+            success: (res2) => {
+              resolve(res2.fileID);
+            },
+            fail: (err) => {
+              reject(err);
+            }
+          });
+        });
+        console.log("Update ok", res);
+        return res;
+      } catch (err) {
+        console.error("Update failed", err);
+        return null;
       }
     },
     addFavoriteToDb(rentId, type = 1, status = 1, title = "Default Title") {

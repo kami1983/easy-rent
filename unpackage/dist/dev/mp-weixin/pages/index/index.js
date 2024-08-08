@@ -25,16 +25,20 @@ const _sfc_main = {
     this.fetchData();
   },
   onShareAppMessage() {
+    const app = getApp();
+    const openId = app.globalData.userInfo.open_id ? app.globalData.userInfo.open_id : "";
     return {
       title: "优势信息通 - 免费社区服务消息",
-      path: "/page/index?share_id=123&share_type=1"
+      path: `/pages/index/index?share_id=${openId}&share_type=1`
       // 假设你要分享的页面路径
     };
   },
   onShareTimeline() {
+    const app = getApp();
+    const openId = app.globalData.userInfo.open_id ? app.globalData.userInfo.open_id : "";
     return {
       title: "优势信息通 - 免费社区服务消息",
-      path: "/page/index?share_id=123&share_type=1"
+      path: `/pages/index/index?share_id=${openId}&share_type=1`
       // 假设你要分享的页面路径
     };
   },
@@ -98,7 +102,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     a: common_vendor.p({
       title: "优势信息通",
       subtitle: "免费社区信息交换平台",
-      description: "福利信息 ｜ 二手交换 ｜ 社区信息"
+      description: "福利信息 ｜ 闲置物品 ｜ 求租寻租"
     }),
     b: common_vendor.f($data.properties, (item, index, i0) => {
       return {
@@ -107,7 +111,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         c: common_vendor.p({
           imageSrc: item.cover_image || "/static/default-placeholder.png",
           title: item.rent_address,
-          details: `${item.rent_type} | ${item.rent_area} 平米 `,
+          baseItem: item,
           price: item.month_rent_price,
           tags: item.tags,
           rentid: item.id

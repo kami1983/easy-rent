@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const libs_dataTools = require("../../libs/data-tools.js");
 const NumberInput = () => "../../components/numberInput/numberInput.js";
 const HouseSpecPicker = () => "../../components/selectPicker/selectPicker.js";
 const RentTypePicker = () => "../../components/radioPicker/radioPicker.js";
@@ -7,6 +8,7 @@ const TagsPicker = () => "../../components/tagsPicker/tagsPicker.js";
 const MapPicker = () => "../../components/mapPicker/mapPicker.js";
 const ImagePicker = () => "../../components/imagePicker/imagePicker.js";
 const _sfc_main = {
+  mixins: [libs_dataTools.rentMixin],
   components: {
     NumberInput,
     HouseSpecPicker,
@@ -23,7 +25,7 @@ const _sfc_main = {
         longitude: 113.32452
       },
       imageList: [],
-      isLocationAuthorized: false,
+      // isLocationAuthorized: false ,
       tags: [
         { name: "非中介", active: false },
         { name: "电梯房", active: false },
@@ -66,47 +68,47 @@ const _sfc_main = {
     };
   },
   mounted() {
-    this.checkLocationAuthorization();
     this.getUserLocation();
   },
   methods: {
-    async updateImageToCloud(tmpFile) {
-      const parts = tmpFile.split("/");
-      const filename = parts[parts.length - 1];
-      const now = /* @__PURE__ */ new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth() + 1;
-      const day = now.getDate();
-      const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-      const formattedDay = day < 10 ? `0${day}` : `${day}`;
-      const app = getApp();
-      const cloudApi = await app.globalData.getCloudApi;
-      try {
-        const res = await new Promise((resolve, reject) => {
-          cloudApi.uploadFile({
-            cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`,
-            // Storage path in the cloud
-            filePath: tmpFile,
-            // Local file path obtained from file selection or chat interfaces
-            config: {
-              env: "prod-4g3usz1465b5625e"
-              // Cloud environment ID
-            },
-            success: (res2) => {
-              resolve(res2.fileID);
-            },
-            fail: (err) => {
-              reject(err);
-            }
-          });
-        });
-        console.log("Update ok", res);
-        return res;
-      } catch (err) {
-        console.error("Update failed", err);
-        return null;
-      }
-    },
+    // async updateImageToCloud(tmpFile) {
+    //   // Splitting URL by '/' to extract the file name
+    //   const parts = tmpFile.split('/');
+    //   const filename = parts[parts.length - 1]; // Getting the last part of the array, which is the filename
+    //   // Getting current date information
+    //   const now = new Date();
+    //   const year = now.getFullYear(); // Current year
+    //   const month = now.getMonth() + 1; // Current month, adjusted for zero index
+    //   const day = now.getDate(); // Current day
+    //   // Ensuring month and day are two digits
+    //   const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+    //   const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    //   // Assuming getApp() and globalData.getCloudApi are correct references for your environment
+    //   const app = getApp();
+    //   const cloudApi = await app.globalData.getCloudApi;
+    //   try {
+    //     const res = await new Promise((resolve, reject) => {
+    //       cloudApi.uploadFile({
+    //         cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`, // Storage path in the cloud
+    //         filePath: tmpFile, // Local file path obtained from file selection or chat interfaces
+    //         config: {
+    //           env: 'prod-4g3usz1465b5625e' // Cloud environment ID
+    //         },
+    //         success: res => {
+    //           resolve(res.fileID); // Resolve promise with fileID if upload succeeds
+    //         },
+    //         fail: err => {
+    //           reject(err); // Reject promise if upload fails
+    //         }
+    //       });
+    //     });
+    //     console.log('Update ok', res);
+    //     return res; // Return the file ID or handle it as needed
+    //   } catch (err) {
+    //     console.error('Update failed', err);
+    //     return null; // Return null in case of an error
+    //   }
+    // },
     onSpecChange(newIndex) {
       console.log("Selected indices:", newIndex);
       this.multiIndex = newIndex;
@@ -133,17 +135,6 @@ const _sfc_main = {
     },
     deleteImage(index) {
       this.imageList.splice(index, 1);
-    },
-    checkLocationAuthorization() {
-      common_vendor.index.getSetting({
-        success: (res) => {
-          if (res.authSetting["scope.userLocation"]) {
-            this.isLocationAuthorized = true;
-          } else {
-            this.isLocationAuthorized = false;
-          }
-        }
-      });
     },
     bindChange(e) {
       const val = e.detail.value;
@@ -325,7 +316,6 @@ const _sfc_main = {
       this.tags[index].active = !this.tags[index].active;
     },
     getUserLocation() {
-      console.log("---- 请求用户的地理位置权限");
       common_vendor.index.authorize({
         scope: "scope.userLocation",
         success: () => {
@@ -336,7 +326,6 @@ const _sfc_main = {
               this.mapLocation.latitude = res.latitude;
               this.mapLocation.longitude = res.longitude;
               console.log("DEBUG  --- 获取位置成功", res);
-              console.log("OLD this.mapLocation = ", this.mapLocation);
               console.log("res.latitude, res.longitude - ", [res.latitude, res.longitude]);
               this.mapLocation.markers = [res.latitude, res.longitude];
               this.mapLocation.latitude = res.latitude;
@@ -434,7 +423,6 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       longitude: $data.mapLocation.longitude,
       latitude: $data.mapLocation.latitude,
       markers: $data.mapLocation.markers,
-      isLocationAuthorized: $data.isLocationAuthorized,
       canUpdateMarkers: true,
       enableScroll: true
     }),

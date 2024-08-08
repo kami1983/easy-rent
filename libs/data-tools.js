@@ -1,12 +1,4 @@
-// mixins/rentMixin.js
-// data() {
-// 	return {
-// 	  properties: [],
-// 	  page: 1,
-// 	  limit: 10,
-// 	  noMoreData: false,
-// 	}
-// },
+
 export default {
 	
     methods: {
@@ -14,7 +6,7 @@ export default {
 			return await this.fetchRentInfosListWithApi('/rent-infos', {
 				page: this.page,
 				limit: this.limit,
-				type: 1,
+				type: 0,
 				status: 1
 			});
         },
@@ -169,6 +161,50 @@ export default {
                 return [];
             }
         },
+		async updateImageToCloud(tmpFile, subDir='') {
+		  // Splitting URL by '/' to extract the file name
+		  const parts = tmpFile.split('/');
+		  const filename = parts[parts.length - 1]; // Getting the last part of the array, which is the filename
+		
+		  // Getting current date information
+		  const now = new Date();
+		  const year = now.getFullYear(); // Current year
+		  const month = now.getMonth() + 1; // Current month, adjusted for zero index
+		  const day = now.getDate(); // Current day
+		
+		  // Ensuring month and day are two digits
+		  const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+		  const formattedDay = day < 10 ? `0${day}` : `${day}`;
+		
+		  // Assuming getApp() and globalData.getCloudApi are correct references for your environment
+		  const app = getApp();
+		  const cloudApi = await app.globalData.getCloudApi;
+		
+		  try {
+		    const res = await new Promise((resolve, reject) => {
+			  // Doc： https://developers.weixin.qq.com/minigame/dev/wxcloud/reference-sdk-api/storage/uploadFile/web.uploadFile.html
+		      cloudApi.uploadFile({
+		        cloudPath: `mini/easy-rent/${subDir}${year}-${formattedMonth}-${formattedDay}/${filename}`, // Storage path in the cloud
+		        filePath: tmpFile, // Local file path obtained from file selection or chat interfaces
+		        config: {
+		          env: 'prod-4g3usz1465b5625e' // Cloud environment ID
+		        },
+		        success: res => {
+		          resolve(res.fileID); // Resolve promise with fileID if upload succeeds
+		        },
+		        fail: err => {
+		          reject(err); // Reject promise if upload fails
+		        }
+		      });
+		    });
+		
+		    console.log('Update ok', res);
+		    return res; // Return the file ID or handle it as needed
+		  } catch (err) {
+		    console.error('Update failed', err);
+		    return null; // Return null in case of an error
+		  }
+		},
 		addFavoriteToDb(rentId, type = 1, status = 1, title = "Default Title") {
 		    const app = getApp();
 		    const data = {

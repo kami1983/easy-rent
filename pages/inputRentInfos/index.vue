@@ -52,7 +52,6 @@
     <MapPicker :longitude="mapLocation.longitude"
                    :latitude="mapLocation.latitude"
                    :markers="mapLocation.markers"
-                   :isLocationAuthorized="isLocationAuthorized"
 				   :canUpdateMarkers="true"
 				   :enableScroll="true"
                    @center-map="handleMapTap"/>
@@ -103,9 +102,10 @@ import RentTypePicker from '@/components/radioPicker/radioPicker.vue';
 import TagsPicker from '@/components/tagsPicker/tagsPicker.vue';
 import MapPicker from '@/components/mapPicker/mapPicker.vue';
 import ImagePicker from '@/components/imagePicker/imagePicker.vue';
-
+import rentMixin from '@/libs/data-tools.js';
 	
 export default {
+	mixins: [rentMixin],
 	components: {
 	    NumberInput,
 		HouseSpecPicker,
@@ -122,7 +122,7 @@ export default {
 				longitude: 113.324520
 			},
 			imageList: [],
-			isLocationAuthorized: false ,
+			// isLocationAuthorized: false ,
 			tags: [
 			{ name: '非中介', active: false },
 			{ name: '电梯房', active: false },
@@ -165,54 +165,54 @@ export default {
 		};
 	},
   mounted() {
-    this.checkLocationAuthorization();
+    // this.checkLocationAuthorization();
 	this.getUserLocation();
   },
   methods: {
 	
-	async updateImageToCloud(tmpFile) {
-	  // Splitting URL by '/' to extract the file name
-	  const parts = tmpFile.split('/');
-	  const filename = parts[parts.length - 1]; // Getting the last part of the array, which is the filename
+	// async updateImageToCloud(tmpFile) {
+	//   // Splitting URL by '/' to extract the file name
+	//   const parts = tmpFile.split('/');
+	//   const filename = parts[parts.length - 1]; // Getting the last part of the array, which is the filename
 	
-	  // Getting current date information
-	  const now = new Date();
-	  const year = now.getFullYear(); // Current year
-	  const month = now.getMonth() + 1; // Current month, adjusted for zero index
-	  const day = now.getDate(); // Current day
+	//   // Getting current date information
+	//   const now = new Date();
+	//   const year = now.getFullYear(); // Current year
+	//   const month = now.getMonth() + 1; // Current month, adjusted for zero index
+	//   const day = now.getDate(); // Current day
 	
-	  // Ensuring month and day are two digits
-	  const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-	  const formattedDay = day < 10 ? `0${day}` : `${day}`;
+	//   // Ensuring month and day are two digits
+	//   const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+	//   const formattedDay = day < 10 ? `0${day}` : `${day}`;
 	
-	  // Assuming getApp() and globalData.getCloudApi are correct references for your environment
-	  const app = getApp();
-	  const cloudApi = await app.globalData.getCloudApi;
+	//   // Assuming getApp() and globalData.getCloudApi are correct references for your environment
+	//   const app = getApp();
+	//   const cloudApi = await app.globalData.getCloudApi;
 	
-	  try {
-	    const res = await new Promise((resolve, reject) => {
-	      cloudApi.uploadFile({
-	        cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`, // Storage path in the cloud
-	        filePath: tmpFile, // Local file path obtained from file selection or chat interfaces
-	        config: {
-	          env: 'prod-4g3usz1465b5625e' // Cloud environment ID
-	        },
-	        success: res => {
-	          resolve(res.fileID); // Resolve promise with fileID if upload succeeds
-	        },
-	        fail: err => {
-	          reject(err); // Reject promise if upload fails
-	        }
-	      });
-	    });
+	//   try {
+	//     const res = await new Promise((resolve, reject) => {
+	//       cloudApi.uploadFile({
+	//         cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`, // Storage path in the cloud
+	//         filePath: tmpFile, // Local file path obtained from file selection or chat interfaces
+	//         config: {
+	//           env: 'prod-4g3usz1465b5625e' // Cloud environment ID
+	//         },
+	//         success: res => {
+	//           resolve(res.fileID); // Resolve promise with fileID if upload succeeds
+	//         },
+	//         fail: err => {
+	//           reject(err); // Reject promise if upload fails
+	//         }
+	//       });
+	//     });
 	
-	    console.log('Update ok', res);
-	    return res; // Return the file ID or handle it as needed
-	  } catch (err) {
-	    console.error('Update failed', err);
-	    return null; // Return null in case of an error
-	  }
-	},
+	//     console.log('Update ok', res);
+	//     return res; // Return the file ID or handle it as needed
+	//   } catch (err) {
+	//     console.error('Update failed', err);
+	//     return null; // Return null in case of an error
+	//   }
+	// },
 	onSpecChange(newIndex) {
 		console.log('Selected indices:', newIndex);
 		this.multiIndex = newIndex
@@ -239,17 +239,6 @@ export default {
 	},
 	deleteImage(index) {
 	  this.imageList.splice(index, 1);
-	},
-	checkLocationAuthorization() {
-	  uni.getSetting({
-	    success: (res) => {
-	      if (res.authSetting['scope.userLocation']) {
-	        this.isLocationAuthorized = true; // 已授权
-	      } else {
-	        this.isLocationAuthorized = false; // 未授权
-	      }
-	    }
-	  });
 	},
 	bindChange(e) {
 	    const val = e.detail.value;
@@ -471,7 +460,6 @@ export default {
 	  this.tags[index].active = !this.tags[index].active;
 	},
 	getUserLocation() {
-	  console.log('---- 请求用户的地理位置权限')
 	  // 请求用户的地理位置权限
 	  uni.authorize({
 	    scope: 'scope.userLocation',
@@ -484,23 +472,13 @@ export default {
 	          this.mapLocation.latitude = res.latitude;
 	          this.mapLocation.longitude = res.longitude;
 			  console.log('DEBUG  --- 获取位置成功', res)
-			  console.log('OLD this.mapLocation = ', this.mapLocation)
-	          // 更新铆钉位置
-	   //        this.mapLocation.markers = [{
-				// id: 0,
-				// latitude: res.latitude,
-				// longitude: res.longitude,
-				// width: 20,
-				// height: 30
-	   //        }];
-	   
 			  console.log('res.latitude, res.longitude - ', [res.latitude, res.longitude])
 			  this.mapLocation.markers = [res.latitude, res.longitude];
 			  // // 可以选择更新视图中心点为新标记点
 			  this.mapLocation.latitude = res.latitude;
 			  this.mapLocation.longitude = res.longitude;
-			  
-			  console.log('NEW 2 this.mapLocation = ', this.mapLocation)
+			  // this.isLocationAuthorized = true; // 已授权
+			  console.log('NEW 2 this.mapLocation = ', this.mapLocation);
 	        },
 	        fail: () => {
 				console.log('DEBUG  --- 位置获取失败')

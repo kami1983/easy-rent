@@ -3,7 +3,7 @@
 		<promo-banner 
 		title="优势信息通"
 		subtitle="免费社区信息交换平台"
-		description="福利信息 ｜ 二手交换 ｜ 社区信息"
+		description="福利信息 ｜ 闲置物品 ｜ 求租寻租"
 		 />
 			
 		<house-item
@@ -11,14 +11,15 @@
 		        :key="index"
 		        :imageSrc="item.cover_image || '/static/default-placeholder.png'"
 		        :title="item.rent_address"
-		        :details="`${item.rent_type} | ${item.rent_area} 平米 `"
+				:baseItem="item"
 				:price="item.month_rent_price"
 		        :tags="item.tags"
 				:rentid="item.id"
 		      />
-	  
+			  
+	  <!-- "item.type = 2 ? `${item.rent_type} | ${item.rent_area} 平米 ` : 'AA'" -->
 		<view v-if="properties.length === 0" class="no-data">
-		  <house-item
+		<house-item
 		  	imageSrc=""
 		  	title=""
 		  	details=""
@@ -58,22 +59,24 @@
 		},
 		onLoad() {
 			console.log('onLoad: start.')
-			
 		},
 		mounted() {
 			this.fetchData()
 		},
 		onShareAppMessage(){
-
+			const app = getApp();
+			const openId = app.globalData.userInfo.open_id?app.globalData.userInfo.open_id:''
 			return {
 			    title: '优势信息通 - 免费社区服务消息',
-			    path: '/page/index?share_id=123&share_type=1'  // 假设你要分享的页面路径
+			    path: `/pages/index/index?share_id=${openId}&share_type=1`  // 假设你要分享的页面路径
 			};
 		},
 		onShareTimeline() {
+			const app = getApp();
+			const openId = app.globalData.userInfo.open_id?app.globalData.userInfo.open_id:''
 			return {
 			    title: '优势信息通 - 免费社区服务消息',
-			    path: '/page/index?share_id=123&share_type=1'  // 假设你要分享的页面路径
+			    path: `/pages/index/index?share_id=${openId}&share_type=1`  // 假设你要分享的页面路径
 			};
 		},
 		methods: {
@@ -85,7 +88,6 @@
 			async fetchData() {
 			    console.log('Fetching data and attaching images.');
 			    await this.fetchRentInfos();
-			    // await this.attachPropertiesWithTmpImage();
 			},
 			navigateTo(page) {
 			  uni.navigateTo({

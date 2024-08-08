@@ -16,6 +16,7 @@ const _sfc_main = {
         title: "",
         time: "",
         price: "",
+        type: 0,
         description: ""
       },
       mapLocation: {
@@ -63,10 +64,12 @@ const _sfc_main = {
     },
     async fetchData(rentId) {
       const res = await this.fetchRentDetailById(rentId);
+      console.log("detail res - ", res);
       if (res && res.status) {
         this.rentDetails = {
           id: rentId,
           title: res.backData.rent_address,
+          type: res.backData.type,
           time: new Date(res.backData.updated_at).toLocaleString(),
           price: parseFloat(res.backData.month_rent_price).toFixed(2),
           description: res.backData.additional_details,
@@ -144,24 +147,40 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: common_vendor.t($data.rentDetails.title),
     b: common_vendor.t($data.rentDetails.time),
-    c: common_vendor.t($data.rentDetails.price),
-    d: common_vendor.p({
+    c: $data.rentDetails.type == 1
+  }, $data.rentDetails.type == 1 ? {
+    d: common_vendor.t($data.rentDetails.price)
+  } : {}, {
+    e: $data.rentDetails.type == 2
+  }, $data.rentDetails.type == 2 ? {
+    f: common_vendor.t($data.rentDetails.price)
+  } : {}, {
+    g: common_vendor.p({
       tags: $data.tags
     }),
-    e: common_vendor.t($data.rentDetails.roomStructure),
-    f: common_vendor.t($data.rentDetails.rentType),
-    g: common_vendor.t($data.rentDetails.rentArea),
-    h: $data.rentDetails.contactInformation
+    h: $data.rentDetails.type == 1
+  }, $data.rentDetails.type == 1 ? {
+    i: common_vendor.t($data.rentDetails.roomStructure)
+  } : {}, {
+    j: $data.rentDetails.type == 1
+  }, $data.rentDetails.type == 1 ? {
+    k: common_vendor.t($data.rentDetails.rentType)
+  } : {}, {
+    l: $data.rentDetails.type == 1
+  }, $data.rentDetails.type == 1 ? {
+    m: common_vendor.t($data.rentDetails.rentArea)
+  } : {}, {
+    n: $data.rentDetails.contactInformation
   }, $data.rentDetails.contactInformation ? {
-    i: common_vendor.t($data.rentDetails.contactInformation)
+    o: common_vendor.t($data.rentDetails.contactInformation)
   } : {}, {
-    j: $data.rentDetails.description
+    p: $data.rentDetails.description
   }, $data.rentDetails.description ? {
-    k: common_vendor.t($data.rentDetails.description)
+    q: common_vendor.t($data.rentDetails.description)
   } : {}, {
-    l: $data.mapLocation.longitude
+    r: $data.mapLocation.longitude
   }, $data.mapLocation.longitude ? {
-    m: common_vendor.p({
+    s: common_vendor.p({
       longitude: $data.mapLocation.longitude,
       latitude: $data.mapLocation.latitude,
       markers: $data.mapLocation.markers,
@@ -170,20 +189,20 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       isLocationAuthorized: true
     })
   } : {}, {
-    n: $data.mapLocation.longitude
+    t: $data.mapLocation.longitude
   }, $data.mapLocation.longitude ? {
-    o: common_vendor.o((...args) => $options.navigateToLocation && $options.navigateToLocation(...args))
+    v: common_vendor.o((...args) => $options.navigateToLocation && $options.navigateToLocation(...args))
   } : {}, {
-    p: common_vendor.f($data.imageList, (image, index, i0) => {
+    w: common_vendor.f($data.imageList, (image, index, i0) => {
       return {
         a: image.url,
         b: index
       };
     }),
-    q: common_vendor.o((...args) => $options.addFavorite && $options.addFavorite(...args)),
-    r: $data.rentDetails.contactInformation
+    x: common_vendor.o((...args) => $options.addFavorite && $options.addFavorite(...args)),
+    y: $data.rentDetails.contactInformation
   }, $data.rentDetails.contactInformation ? {
-    s: common_vendor.o((...args) => $options.makePhoneCall && $options.makePhoneCall(...args))
+    z: common_vendor.o((...args) => $options.makePhoneCall && $options.makePhoneCall(...args))
   } : {});
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/Users/kami-m1/work-files/coding/git-files/kami-self/contact-us/easy-rent/pages/rentDetail/index.vue"]]);

@@ -47,8 +47,10 @@ import RentTypePicker from '@/components/radioPicker/radioPicker.vue';
 import TagsPicker from '@/components/tagsPicker/tagsPicker.vue';
 import MapPicker from '@/components/mapPicker/mapPicker.vue';
 import ImagePicker from '@/components/imagePicker/imagePicker.vue';
+import rentMixin from '@/libs/data-tools.js';
 
 export default {
+	mixins: [rentMixin],
 	components: {
 	    NumberInput,
 		HouseSpecPicker,
@@ -100,56 +102,56 @@ export default {
 		}
 		};
 	},
-  mounted() {
-    this.checkLocationAuthorization();
-	// this.getUserLocation();
-  },
+ //  mounted() {
+ //    this.checkLocationAuthorization();
+	// // this.getUserLocation();
+ //  },
   methods: {
 	
-	async updateImageToCloud(tmpFile) {
-	  // Splitting URL by '/' to extract the file name
-	  const parts = tmpFile.split('/');
-	  const filename = parts[parts.length - 1]; // Getting the last part of the array, which is the filename
+	// async updateImageToCloud(tmpFile) {
+	//   // Splitting URL by '/' to extract the file name
+	//   const parts = tmpFile.split('/');
+	//   const filename = parts[parts.length - 1]; // Getting the last part of the array, which is the filename
 	
-	  // Getting current date information
-	  const now = new Date();
-	  const year = now.getFullYear(); // Current year
-	  const month = now.getMonth() + 1; // Current month, adjusted for zero index
-	  const day = now.getDate(); // Current day
+	//   // Getting current date information
+	//   const now = new Date();
+	//   const year = now.getFullYear(); // Current year
+	//   const month = now.getMonth() + 1; // Current month, adjusted for zero index
+	//   const day = now.getDate(); // Current day
 	
-	  // Ensuring month and day are two digits
-	  const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-	  const formattedDay = day < 10 ? `0${day}` : `${day}`;
+	//   // Ensuring month and day are two digits
+	//   const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+	//   const formattedDay = day < 10 ? `0${day}` : `${day}`;
 	
-	  // Assuming getApp() and globalData.getCloudApi are correct references for your environment
-	  const app = getApp();
-	  const cloudApi = await app.globalData.getCloudApi;
+	//   // Assuming getApp() and globalData.getCloudApi are correct references for your environment
+	//   const app = getApp();
+	//   const cloudApi = await app.globalData.getCloudApi;
 	
-	  try {
-	    const res = await new Promise((resolve, reject) => {
-		  // Doc： https://developers.weixin.qq.com/minigame/dev/wxcloud/reference-sdk-api/storage/uploadFile/web.uploadFile.html
-	      cloudApi.uploadFile({
-	        cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`, // Storage path in the cloud
-	        filePath: tmpFile, // Local file path obtained from file selection or chat interfaces
-	        config: {
-	          env: 'prod-4g3usz1465b5625e' // Cloud environment ID
-	        },
-	        success: res => {
-	          resolve(res.fileID); // Resolve promise with fileID if upload succeeds
-	        },
-	        fail: err => {
-	          reject(err); // Reject promise if upload fails
-	        }
-	      });
-	    });
+	//   try {
+	//     const res = await new Promise((resolve, reject) => {
+	// 	  // Doc： https://developers.weixin.qq.com/minigame/dev/wxcloud/reference-sdk-api/storage/uploadFile/web.uploadFile.html
+	//       cloudApi.uploadFile({
+	//         cloudPath: `mini/easy-rent/${year}-${formattedMonth}-${formattedDay}/${filename}`, // Storage path in the cloud
+	//         filePath: tmpFile, // Local file path obtained from file selection or chat interfaces
+	//         config: {
+	//           env: 'prod-4g3usz1465b5625e' // Cloud environment ID
+	//         },
+	//         success: res => {
+	//           resolve(res.fileID); // Resolve promise with fileID if upload succeeds
+	//         },
+	//         fail: err => {
+	//           reject(err); // Reject promise if upload fails
+	//         }
+	//       });
+	//     });
 	
-	    console.log('Update ok', res);
-	    return res; // Return the file ID or handle it as needed
-	  } catch (err) {
-	    console.error('Update failed', err);
-	    return null; // Return null in case of an error
-	  }
-	},
+	//     console.log('Update ok', res);
+	//     return res; // Return the file ID or handle it as needed
+	//   } catch (err) {
+	//     console.error('Update failed', err);
+	//     return null; // Return null in case of an error
+	//   }
+	// },
 	onSpecChange(newIndex) {
 		console.log('Selected indices:', newIndex);
 		this.multiIndex = newIndex
@@ -177,17 +179,17 @@ export default {
 	deleteImage(index) {
 	  this.imageList.splice(index, 1);
 	},
-	checkLocationAuthorization() {
-	  uni.getSetting({
-	    success: (res) => {
-	      if (res.authSetting['scope.userLocation']) {
-	        this.isLocationAuthorized = true; // 已授权
-	      } else {
-	        this.isLocationAuthorized = false; // 未授权
-	      }
-	    }
-	  });
-	},
+	// checkLocationAuthorization() {
+	//   uni.getSetting({
+	//     success: (res) => {
+	//       if (res.authSetting['scope.userLocation']) {
+	//         this.isLocationAuthorized = true; // 已授权
+	//       } else {
+	//         this.isLocationAuthorized = false; // 未授权
+	//       }
+	//     }
+	//   });
+	// },
 	bindChange(e) {
 	    const val = e.detail.value;
 	    this.selectedRoom = this.roomStruct.rooms[val[0]];
@@ -232,23 +234,10 @@ export default {
 	},
 	async submitForm() {
 	  
-	  // 获取月租价格
+	  // 获取月租价格（这里是物品价格）
 	  const formMonthRentPrice = this.rentForm.rent_form_month_rent_price
-	  
-	  // // 获取是整租还是合租
-	  // const formRentType = this.rentForm.rent_form_rent_type
-	  
-	  // 获取租赁面积
-	  // const formRentArea = this.rentForm.rent_form_rent_area
-	  
 	  // 获取租赁地址
 	  const formRentAddress = this.rentForm.rent_form_address
-	  
-	  // 获取房屋结构
-	  // const formHouseStruct = this.multiIndex.map(struct=>{
-		 //  return struct
-	  // })
-	  
 	  // 使用 filter 方法找到 active 为 true 的标签
 	  const activeTags = this.tags.filter(tag => tag.active);
 	  
@@ -284,23 +273,6 @@ export default {
 		  }
 	  }
 	  
-	  // // 验证租赁类型
-	  // if (!formRentType) {
-	  //     uni.showToast({
-	  //         title: '请选择租赁类型',
-	  //         icon: 'none'
-	  //     });
-	  //     return;
-	  // }
-	
-	  // if (!formRentArea || isNaN(Number(formRentArea)) || Number(formRentArea) <= 0) {
-		 //  uni.showToast({
-			//   title: '请输入有效的租赁面积',
-			//   icon: 'none'
-		 //  });
-		 //  return;
-	  // }
- 
 	  if (!formRentAddress?.trim()) {
 	      uni.showToast({
 	          title: '物品标题不能为空',
@@ -308,7 +280,6 @@ export default {
 	      });
 	      return;
 	  }
-	  
 	  
 	  console.log('DEBUG ', {formRentAddress, formContractInformation })
 	  if(!formContractInformation?.trim()){
@@ -403,43 +374,7 @@ export default {
 	toggleTag(index) {
 	  this.tags[index].active = !this.tags[index].active;
 	},
-	// getUserLocation() {
-	//   // 请求用户的地理位置权限
-	//   uni.authorize({
-	//     scope: 'scope.userLocation',
-	//     success: () => {
-	//       // 权限授予后，获取当前位置
-	//       uni.getLocation({
-	//         type: 'wgs84',
-	//         success: (res) => {
-	//           this.mapLocation.latitude = res.latitude;
-	//           this.mapLocation.longitude = res.longitude;
-	   
-	// 		  console.log('res.latitude, res.longitude - ', [res.latitude, res.longitude])
-	// 		  this.mapLocation.markers = [res.latitude, res.longitude];
-	// 		  // // 可以选择更新视图中心点为新标记点
-	// 		  this.mapLocation.latitude = res.latitude;
-	// 		  this.mapLocation.longitude = res.longitude;
-			  
-	//         },
-	//         fail: () => {
-	// 			console.log('DEBUG  --- 位置获取失败')
-	//           uni.showToast({
-	//             title: '获取位置失败',
-	//             icon: 'none'
-	//           });
-	//         }
-	//       });
-	//     },
-	//     fail: () => {
-	//       uni.showModal({
-	//         title: '位置权限未授权',
-	//         content: '请在设置中打开位置权限',
-	//         showCancel: false
-	//       });
-	//     }
-	//   });
-	// },
+	
 	handleMapTap(e) {
 		this.mapLocation.latitude = e.latitude;
 		this.mapLocation.longitude = e.longitude;

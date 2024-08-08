@@ -13,7 +13,11 @@
 </template>
 
 <script>
+	
+import rentMixin from '@/libs/data-tools.js';
+	
 export default {
+  mixins: [rentMixin],
   props: {
       userInfo: {
 		  type: Object,
@@ -76,9 +80,12 @@ export default {
 			}
 		});
 	},
-	onChooseAvatar(event) {
+	async onChooseAvatar(event) {
 		console.log('Event . ', event)
-		this.userInfo.avatarUrl = event.detail.avatarUrl
+		
+		const tmpImg = event.detail.avatarUrl
+		const cloudImageId = await this.updateImageToCloud(tmpImg);
+		this.userInfo.avatarUrl = cloudImageId
 		
 		const app = getApp();
 		app.globalData.callWithWxCloud({

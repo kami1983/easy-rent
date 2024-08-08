@@ -19,10 +19,10 @@ const _sfc_main = {
       type: Array,
       default: () => []
     },
-    isLocationAuthorized: {
-      type: Boolean,
-      default: false
-    },
+    // isLocationAuthorized: {
+    //   type: Boolean,
+    //   default: false
+    // },
     canUpdateMarkers: {
       // New prop to control marker updates
       type: Boolean,
@@ -47,8 +47,9 @@ const _sfc_main = {
   },
   data() {
     return {
-      localMarkers: []
+      localMarkers: [],
       // Now markers are managed internally
+      isLocationAuthorized: false
     };
   },
   watch: {
@@ -67,6 +68,9 @@ const _sfc_main = {
       deep: true
       // This ensures even nested data changes are detected
     }
+  },
+  mounted() {
+    this.checkLocationAuthorization();
   },
   methods: {
     updateMarker(event) {
@@ -89,6 +93,17 @@ const _sfc_main = {
     },
     updateLocalMarkers(markers) {
       this.localMarkers = [markers];
+    },
+    checkLocationAuthorization() {
+      common_vendor.index.getSetting({
+        success: (res) => {
+          if (res.authSetting["scope.userLocation"]) {
+            this.isLocationAuthorized = true;
+          } else {
+            this.isLocationAuthorized = false;
+          }
+        }
+      });
     },
     requestLocationPermission() {
       common_vendor.index.authorize({
@@ -117,8 +132,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     d: $props.enableScroll,
     e: common_vendor.o((...args) => $options.updateMarker && $options.updateMarker(...args)),
     f: $data.localMarkers,
-    g: !$props.isLocationAuthorized
-  }, !$props.isLocationAuthorized ? {
+    g: !$data.isLocationAuthorized
+  }, !$data.isLocationAuthorized ? {
     h: common_vendor.o((...args) => $options.requestLocationPermission && $options.requestLocationPermission(...args))
   } : {});
 }

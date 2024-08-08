@@ -86,4 +86,11 @@
     padding: 1px 6px;
     font-weight: bold;
 }
+.centered-red-text.data-v-2f62ac17 {
+    color: red;
+    text-align: center;
+	font-size: 14px;
+	background-color: white;
+	border-radius: 10px;
+}
 

@@ -10,8 +10,8 @@ const _sfc_main = {
       type: String,
       required: true
     },
-    details: {
-      type: String,
+    baseItem: {
+      type: Object,
       required: true
     },
     tags: {
@@ -48,14 +48,27 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: $options.effectiveImageSrc,
     b: common_vendor.o(($event) => $options.navigateTo("/pages/rentDetail/index?rentid=" + $props.rentid)),
-    c: common_vendor.t($props.title),
-    d: common_vendor.t($props.details),
-    e: $props.price
+    c: $props.baseItem.type == 1
+  }, $props.baseItem.type == 1 ? {} : {}, {
+    d: $props.baseItem.type == 2
+  }, $props.baseItem.type == 2 ? {} : {}, {
+    e: common_vendor.t($props.title),
+    f: $props.baseItem.type == 1
+  }, $props.baseItem.type == 1 ? common_vendor.e({
+    g: common_vendor.t($props.baseItem.rent_type),
+    h: common_vendor.t($props.baseItem.rent_area),
+    i: $props.price
   }, $props.price ? {
-    f: common_vendor.t($props.price)
+    j: common_vendor.t($props.price)
+  } : {}) : {}, {
+    k: $props.baseItem.type == 2
+  }, $props.baseItem.type == 2 ? common_vendor.e({
+    l: $props.price
+  }, $props.price ? {
+    m: common_vendor.t($props.price)
   } : {}, {
-    g: common_vendor.t($props.tags)
-  });
+    n: common_vendor.t($props.tags)
+  }) : {});
 }
 const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-5f916c82"], ["__file", "/Users/kami-m1/work-files/coding/git-files/kami-self/contact-us/easy-rent/components/houseItem/houseItem.vue"]]);
 wx.createComponent(Component);

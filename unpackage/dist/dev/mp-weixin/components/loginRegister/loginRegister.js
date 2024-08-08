@@ -1,6 +1,8 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const libs_dataTools = require("../../libs/data-tools.js");
 const _sfc_main = {
+  mixins: [libs_dataTools.rentMixin],
   props: {
     userInfo: {
       type: Object,
@@ -59,9 +61,11 @@ const _sfc_main = {
         }
       });
     },
-    onChooseAvatar(event) {
+    async onChooseAvatar(event) {
       console.log("Event . ", event);
-      this.userInfo.avatarUrl = event.detail.avatarUrl;
+      const tmpImg = event.detail.avatarUrl;
+      const cloudImageId = await this.updateImageToCloud(tmpImg);
+      this.userInfo.avatarUrl = cloudImageId;
       const app = getApp();
       app.globalData.callWithWxCloud({
         path: "/updateUser",

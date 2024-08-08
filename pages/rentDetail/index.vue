@@ -3,19 +3,24 @@
     <!-- Header with title and price -->
     <view class="header">
       <text class="title">{{ rentDetails.title }}</text>
-      <text class="time">{{ rentDetails.time }}</text>
-      <text class="price">¥ {{ rentDetails.price }}</text>
+      <text class="time">更新：{{ rentDetails.time }}</text>
+      <text v-if="rentDetails.type==1" class="price">¥ {{ rentDetails.price }} / 月</text>
+	  <text v-if="rentDetails.type==2" class="price">¥ {{ rentDetails.price }}</text>
     </view>
 
 	<view class="info-section">
 	  <TagsPicker :tags="tags" />
 	</view>
 	
+	<view class="user-tip">
+		* 消息为用户自行提交，属于个人行为，注意分辨。
+	</view>
+	
     <!-- Description -->	
 	<view class="description">
-	      <view class="description-text">房屋结构：{{ rentDetails.roomStructure }}</view>
-	      <view class="description-text">租赁形式：{{ rentDetails.rentType }}</view>
-	      <view class="description-text">租赁面积：{{ rentDetails.rentArea }}平米</view>
+	      <view v-if="rentDetails.type==1" class="description-text">房屋结构：{{ rentDetails.roomStructure }}</view>
+	      <view v-if="rentDetails.type==1" class="description-text">租赁形式：{{ rentDetails.rentType }}</view>
+	      <view v-if="rentDetails.type==1" class="description-text">租赁面积：{{ rentDetails.rentArea }}平米</view>
 		  <view v-if="rentDetails.contactInformation" class="description-text">联系方式：{{ rentDetails.contactInformation }}</view>
 		  <view v-if="rentDetails.description" class="description-text">
 			  <view class="more-description">附加信息：</view>
@@ -68,6 +73,7 @@ export default {
         title: '',
         time: '',
         price: '',
+		type: 0,
         description: ''
       },
       mapLocation: {
@@ -124,10 +130,12 @@ export default {
 	}, 
     async fetchData(rentId) {
       const res = await this.fetchRentDetailById(rentId);
+	  console.log('detail res - ', res)
       if (res && res.status) {
         this.rentDetails = {
 		  id: rentId,
           title: res.backData.rent_address,
+		  type: res.backData.type,
           time: new Date(res.backData.updated_at).toLocaleString(),
           price: parseFloat(res.backData.month_rent_price).toFixed(2),
           description: res.backData.additional_details,
@@ -258,7 +266,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 
 .title {
@@ -376,6 +384,13 @@ export default {
   background-color: #fff; /* 背景颜色，根据需要进行更改 */
   box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* 添加阴影 */
   padding: 10px 20px; /* 上下内边距10px，左右20px */
+}
+
+.user-tip {
+	font-size: 12px;
+	color: red;
+	text-align: center;
+	padding-bottom: 10px;
 }
 
 /* .action-buttons button {

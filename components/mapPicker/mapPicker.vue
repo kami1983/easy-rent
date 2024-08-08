@@ -35,10 +35,10 @@ export default {
 	  type: Array,
 	  default: () => []
 	},
-    isLocationAuthorized: {
-      type: Boolean,
-      default: false
-    },
+    // isLocationAuthorized: {
+    //   type: Boolean,
+    //   default: false
+    // },
 	canUpdateMarkers: {  // New prop to control marker updates
 	  type: Boolean,
 	  default: true
@@ -61,7 +61,8 @@ export default {
   },
   data() {
     return {
-       localMarkers: [] // Now markers are managed internally
+       localMarkers: [] ,// Now markers are managed internally
+	   isLocationAuthorized: false,
     };
   },
   watch: {
@@ -79,6 +80,9 @@ export default {
       },
       deep: true // This ensures even nested data changes are detected
     }
+  },
+  mounted() {
+    this.checkLocationAuthorization();
   },
   methods: {
     updateMarker(event) {
@@ -101,6 +105,17 @@ export default {
     },
 	updateLocalMarkers(markers) {
 	  this.localMarkers = [markers]; // Update local markers whenever the prop changes
+	},
+	checkLocationAuthorization() {
+	  uni.getSetting({
+	    success: (res) => {
+	      if (res.authSetting['scope.userLocation']) {
+	        this.isLocationAuthorized = true; // 已授权
+	      } else {
+	        this.isLocationAuthorized = false; // 未授权
+	      }
+	    }
+	  });
 	},
     requestLocationPermission() {
       uni.authorize({

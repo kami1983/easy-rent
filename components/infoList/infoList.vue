@@ -5,6 +5,7 @@
             scroll-y
             :style="{ height: 'calc(100% - 40px)' }">
             <view class="property-list">
+				<view class="centered-red-text">顶一顶可提升权重，排名靠前</view>
                 <view class="property-item" v-for="(item, index) in properties" :key="index">
                     <view class="property-content" @click="handleTap(item)">
                         <view class="property-details">
@@ -97,7 +98,6 @@ export default {
 		            // Find the index of the property to update
 		            const index = this.properties.findIndex(item => item.id === rentId);
 		            if (index !== -1) {
-						console.log("__update_diff", _update_diff)
 		                // Update the property in the array
 		                this.$set(this.properties, index, {
 		                    ...this.properties[index],
@@ -330,6 +330,14 @@ export default {
     border-radius: 5px;
     padding: 1px 6px;
     font-weight: bold;
+}
+
+.centered-red-text {
+    color: red;
+    text-align: center;
+	font-size: 14px;
+	background-color: white;
+	border-radius: 10px;
 }
 
 </style>

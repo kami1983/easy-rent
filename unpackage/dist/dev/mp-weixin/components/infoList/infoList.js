@@ -57,7 +57,6 @@ const _sfc_main = {
           });
           const index = this.properties.findIndex((item) => item.id === rentId);
           if (index !== -1) {
-            console.log("__update_diff", _update_diff);
             this.$set(this.properties, index, {
               ...this.properties[index],
               ...response.backData,
