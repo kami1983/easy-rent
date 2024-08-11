@@ -18,8 +18,12 @@ const _sfc_main = {
       debugInfos: ""
     };
   },
-  onLoad() {
-    console.log("onLoad: start.");
+  onLoad(options) {
+    console.log("For share : ", options);
+    this.updateShareCounter({
+      news_id: options.news_id,
+      share_id: options.share_id
+    });
   },
   mounted() {
     this.fetchData();
@@ -29,7 +33,7 @@ const _sfc_main = {
     const openId = app.globalData.userInfo.open_id ? app.globalData.userInfo.open_id : "";
     return {
       title: "优势信息通 - 免费社区服务消息",
-      path: `/pages/index/index?share_id=${openId}&share_type=1`
+      path: `/pages/index/index?share_id=${openId}&news_id=0`
       // 假设你要分享的页面路径
     };
   },

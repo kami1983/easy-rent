@@ -426,22 +426,16 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       canUpdateMarkers: true,
       enableScroll: true
     }),
-    q: this.contactInformation.isChecked
-  }, this.contactInformation.isChecked ? {
-    r: common_vendor.o($options.onContactInformationChanged),
-    s: common_vendor.p({
-      placeholder: "国内电话",
-      ["class-name"]: "number-input"
-    })
-  } : {}, {
-    t: $data.additionalDetails.isChecked,
-    v: common_vendor.o((...args) => $options.toggleAdditionalDetails && $options.toggleAdditionalDetails(...args)),
-    w: this.additionalDetails.isChecked
+    q: $data.contactInformation.inputData,
+    r: common_vendor.o(($event) => $data.contactInformation.inputData = $event.detail.value),
+    s: $data.additionalDetails.isChecked,
+    t: common_vendor.o((...args) => $options.toggleAdditionalDetails && $options.toggleAdditionalDetails(...args)),
+    v: this.additionalDetails.isChecked
   }, this.additionalDetails.isChecked ? {
-    x: this.additionalDetails.inputData,
-    y: common_vendor.o(($event) => this.additionalDetails.inputData = $event.detail.value)
+    w: this.additionalDetails.inputData,
+    x: common_vendor.o(($event) => this.additionalDetails.inputData = $event.detail.value)
   } : {}, {
-    z: common_vendor.o((...args) => $options.submitForm && $options.submitForm(...args))
+    y: common_vendor.o((...args) => $options.submitForm && $options.submitForm(...args))
   });
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-097448e0"], ["__file", "/Users/kami-m1/work-files/coding/git-files/kami-self/contact-us/easy-rent/pages/inputRentInfos/index.vue"]]);

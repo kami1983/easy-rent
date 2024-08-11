@@ -242,6 +242,39 @@ export default {
 		        });
 		    });
 		},
+		updateShareCounter(shareObj) {
+			const news_id = shareObj.news_id;
+			const share_id = shareObj.share_id;
+			
+			console.log('updateShareCounter - ', {news_id, share_id})
+			if(!news_id || !share_id) {
+				return null;
+			}
+			
+			console.log('Try to update the database.')
+			
+			const chain_type = ''
+			const chain_hash = ''
+			const type = 1
+			const status = 1
+			 
+		    const app = getApp();
+		    const data = {
+		        news_id, share_id, chain_type, chain_hash, type, status
+		    };
+			
+		    app.globalData.callWithWxCloud({
+		        path: '/share_counter/insert',
+		        data: data,
+		        method: 'POST'
+		    })
+		    .then(response => {
+		        console.log('记录分享数据', response)
+		    })
+		    .catch(error => {
+		        console.error('记录分享数据失败:', error);
+		    });
+		},
 		calculateDateDifference(updatedAt) {
 		    const now = new Date();
 		    const updatedDate = new Date(updatedAt);

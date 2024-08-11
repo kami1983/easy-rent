@@ -68,7 +68,8 @@
 	</view> -->
 	<view class="form-item">
 	   <text class="label">联系方式：</text>
-		<NumberInput v-if="this.contactInformation.isChecked" @onChange="onContactInformationChanged" placeholder="国内电话" class-name="number-input" />
+		<!-- <NumberInput v-if="this.contactInformation.isChecked" @onChange="onContactInformationChanged" placeholder="电话或者微信" class-name="number-input" /> -->
+		<input type="text" placeholder="电话或者微信" v-model="contactInformation.inputData" />
 	</view>
 	<!-- <view class="form-item">
 	  <checkbox-group @change="toggleCashDiscount">

@@ -13,7 +13,7 @@
 	</view>
 	
 	<view class="user-tip">
-		* 消息为用户自行提交，属于个人行为，注意分辨。
+		* 信息为用户自行提交，属于个人行为，注意甄别。
 	</view>
 	
     <!-- Description -->	
@@ -49,7 +49,9 @@
     <view class="action-buttons">
       <button open-type="share">分享</button>
 	  <button @tap="addFavorite">收藏</button>
-      <button v-if="rentDetails.contactInformation" @tap="makePhoneCall">打电话</button>
+      <!-- <button v-if="rentDetails.contactInformation" @tap="makePhoneCall">打电话</button> -->
+	  <button v-if="isPhoneNumber(rentDetails.contactInformation)" @tap="makePhoneCall">打电话</button>
+
     </view>
   </view>
 </template>
@@ -156,6 +158,11 @@ export default {
         console.error('Failed to fetch rent details');
       }
     },
+	isPhoneNumber(phoneNumber) {
+		// 假设电话号码格式为11位数字
+		const phoneNumberRegex = /^\d{11}$/;
+		return phoneNumberRegex.test(phoneNumber);
+	},
     makePhoneCall() {
       uni.makePhoneCall({
         phoneNumber: this.rentDetails.contactInformation, // 这里填写你要联系的电话号码

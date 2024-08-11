@@ -46,7 +46,7 @@ const _sfc_main = {
     confirmDeletion(item) {
       console.log("confirmDeletion --- ");
       common_vendor.index.showModal({
-        title: "确认删除",
+        title: "移除收藏？",
         content: `${parseInt(item.rent_area)}平，${item.rent_address}`,
         success: (res) => {
           if (res.confirm) {
@@ -74,7 +74,7 @@ const _sfc_main = {
         });
         if (response.status) {
           common_vendor.index.showToast({
-            title: "删除成功",
+            title: "移除成功",
             icon: "success"
           });
           const index = this.properties.findIndex((item) => item.id === rentId);
@@ -83,7 +83,7 @@ const _sfc_main = {
           }
         } else {
           common_vendor.index.showToast({
-            title: response.message || "删除失败",
+            title: response.message || "移除失败",
             icon: "none"
           });
         }

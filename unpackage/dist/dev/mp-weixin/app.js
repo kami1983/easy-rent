@@ -69,7 +69,7 @@ const _sfc_main = {
       nickName: "无名氏",
       avatarUrl: "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
     },
-    version: "1.2.1",
+    version: "1.2.2",
     getCloudApi: getCloudApi(),
     callWithWxCloud
   },

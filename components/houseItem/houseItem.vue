@@ -1,5 +1,5 @@
 <template>
-    <view class="card">
+    <view v-if="baseItem != undefined" class="card">
         <image class="card-image" :src="effectiveImageSrc" mode="aspectFill" @click="navigateTo('/pages/rentDetail/index?rentid=' + rentid)" />
         <view class="card-content">
             <view class="card-title">
@@ -9,7 +9,7 @@
             </view>
             <text v-if="baseItem.type == 1" class="card-details">
                 {{ baseItem.rent_type }} | {{ baseItem.rent_area}} 平米 
-                <text v-if="price" class="price">{{ price }}¥/月</text>  <!-- Apply specific styles to the price -->
+                <text v-if="price" class="price">{{ price }}¥/月</text> 
             </text>
             <text v-if="baseItem.type == 2" class="card-details">
                 <text v-if="price" class="price">价码：{{ price }}</text> ｜ 

@@ -77,7 +77,7 @@ export default {
 		confirmDeletion(item) {
 			console.log('confirmDeletion --- ')
 		    uni.showModal({
-		        title: '确认删除',
+		        title: '移除收藏？',
 		        content: `${parseInt(item.rent_area)}平，${item.rent_address}`,
 		        success: (res) => {
 		            if (res.confirm) {
@@ -109,7 +109,7 @@ export default {
 		
 			    if (response.status) {
 			        uni.showToast({
-			            title: '删除成功',
+			            title: '移除成功',
 			            icon: 'success'
 			        });
 		
@@ -120,7 +120,7 @@ export default {
 			        }
 			    } else {
 			        uni.showToast({
-			            title: response.message || '删除失败',
+			            title: response.message || '移除失败',
 			            icon: 'none'
 			        });
 			    }

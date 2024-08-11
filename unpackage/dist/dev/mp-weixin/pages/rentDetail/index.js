@@ -90,6 +90,10 @@ const _sfc_main = {
         console.error("Failed to fetch rent details");
       }
     },
+    isPhoneNumber(phoneNumber) {
+      const phoneNumberRegex = /^\d{11}$/;
+      return phoneNumberRegex.test(phoneNumber);
+    },
     makePhoneCall() {
       common_vendor.index.makePhoneCall({
         phoneNumber: this.rentDetails.contactInformation,
@@ -200,8 +204,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       };
     }),
     x: common_vendor.o((...args) => $options.addFavorite && $options.addFavorite(...args)),
-    y: $data.rentDetails.contactInformation
-  }, $data.rentDetails.contactInformation ? {
+    y: $options.isPhoneNumber($data.rentDetails.contactInformation)
+  }, $options.isPhoneNumber($data.rentDetails.contactInformation) ? {
     z: common_vendor.o((...args) => $options.makePhoneCall && $options.makePhoneCall(...args))
   } : {});
 }
